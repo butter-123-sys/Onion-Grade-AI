@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="कांदा स्मार्ट AI - कांद्याची गुणवत्ता, पीक व्यवस्थापन आणि बाजार निर्णय एका सोप्या अॅपमध्ये">
+  <meta name="theme-color" content="#16a34a">
+  <title>कांदा स्मार्ट AI — ONION-SMART AI</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🧅</text></svg>">
+</head>
+<body class="mode-auto">
+
+<!-- ===== Screen-Sensitive Device Mode & Multilingual Control Bar ===== -->
+<div id="demo-control-bar" class="demo-control-bar">
+  <div class="control-group device-switcher">
+    <span class="control-label">🖥️ स्क्रीन आकार / Screen Size:</span>
+    <button class="device-btn active" data-mode="auto" onclick="setDeviceView('auto')" title="Screen Sensitive (Auto-Responsive)">
+      <span>🔄</span> <span class="btn-text">Screen Sensitive (Auto)</span>
+    </button>
+    <button class="device-btn" data-mode="mobile" onclick="setDeviceView('mobile')" title="Mobile View (390px)">
+      <span>📱</span> <span class="btn-text">Mobile (390px)</span>
+    </button>
+    <button class="device-btn" data-mode="tablet" onclick="setDeviceView('tablet')" title="Tablet View (768px)">
+      <span>📟</span> <span class="btn-text">Tablet (768px)</span>
+    </button>
+    <button class="device-btn" data-mode="desktop" onclick="setDeviceView('desktop')" title="Desktop View (1140px)">
+      <span>💻</span> <span class="btn-text">Desktop Wide</span>
+    </button>
+  </div>
+
+  <div class="control-group lang-switcher">
+    <span class="control-label">🌐 भाषा / Language:</span>
+    <button class="lang-pill-btn active" data-lang="mr" onclick="changeLanguage('mr')">मराठी</button>
+    <button class="lang-pill-btn" data-lang="hi" onclick="changeLanguage('hi')">हिंदी</button>
+    <button class="lang-pill-btn" data-lang="en" onclick="changeLanguage('en')">English</button>
+  </div>
+
+  <div class="control-group role-switcher">
+    <button class="role-pill-btn active" id="role-btn-farmer" onclick="toggleRole('farmer')" title="Farmer Mode">👨‍🌾 शेतकरी</button>
+    <button class="role-pill-btn" id="role-btn-officer" onclick="toggleRole('officer')" title="Officer Mode">🏛️ अधिकारी</button>
+  </div>
+</div>
+
+<div id="app">
+
+  <!-- ===== SCREEN 1 — LANGUAGE & ONBOARDING ===== -->
+  <div class="screen no-nav active" id="screen-onboarding">
+    <div class="onboarding-screen">
+      <img src="assets/onion_field_bg.jpg" alt="" class="onboarding-bg">
+      <div class="onboarding-content">
+        <div class="app-logo">🧅</div>
+        <h1 class="app-title" data-i18n="app_title">कांदा स्मार्ट AI</h1>
+        <p class="app-subtitle-en">ONION-SMART AI</p>
+        <p class="app-tagline" data-i18n="app_subtagline">तुमच्या कांद्याच्या प्रत्येक टप्प्यावर AI मार्गदर्शन</p>
+        
+        <img src="assets/farmer_hero.jpg" alt="Indian onion farmer" class="farmer-hero-img">
+
+        <p class="app-tagline" style="font-size:13px; color: var(--gray-500); max-width:300px;" data-i18n="app_tagline">
+          कांद्याची गुणवत्ता, पीक व्यवस्थापन आणि बाजार निर्णय — एका सोप्या अॅपमध्ये
+        </p>
+
+        <div class="language-section">
+          <h3 data-i18n="choose_lang">भाषा निवडा / Choose Language</h3>
+          <div class="language-buttons">
+            <button class="lang-btn active" data-lang="mr" onclick="selectLanguage('mr')">मराठी</button>
+            <button class="lang-btn" data-lang="hi" onclick="selectLanguage('hi')">हिंदी</button>
+            <button class="lang-btn" data-lang="en" onclick="selectLanguage('en')">English</button>
+          </div>
+        </div>
+
+        <div class="onboarding-actions">
+          <button class="btn btn-primary btn-lg btn-block" onclick="navigateTo('screen-registration')">
+            <span class="btn-icon">🚀</span> <span data-i18n="btn_start">सुरू करा</span>
+          </button>
+          <button class="btn btn-secondary btn-lg btn-block" onclick="startVoice()">
+            <span class="btn-icon">🎙️</span> <span data-i18n="btn_voice">बोलून विचारा</span>
+          </button>
+          <button class="btn btn-outline btn-block mt-8" onclick="quickDemoStart()" style="border:1.5px dashed var(--green-600);color:var(--green-700);font-weight:700;background:rgba(255,255,255,0.9);">
+            <span class="btn-icon">⚡</span> <span data-i18n="btn_demo">थेट डेमो सुरू करा (1-Click)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===== SCREEN 2 — FARM REGISTRATION ===== -->
+  <div class="screen no-nav" id="screen-registration">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-onboarding')">←</button>
+      <h2 class="header-title">शेत नोंदणी</h2>
+      <div class="header-actions">
+        <button class="header-icon-btn tts-btn" title="ऐका">🔊</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="card card-green" style="margin-bottom:16px; text-align:center;">
+        <span style="font-size:32px;">🌱</span>
+        <p style="font-weight:600; margin-top:6px; color:var(--green-800);">तुमच्या शेताची माहिती भरा</p>
+        <p style="font-size:12px; color:var(--gray-500); margin-top:2px;">फक्त साधी माहिती लागेल</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">👤 शेतकरी नाव</label>
+        <input type="text" class="form-input" placeholder="तुमचे नाव लिहा" id="farmer-name">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">🏘️ गाव</label>
+        <input type="text" class="form-input" placeholder="तुमच्या गावाचे नाव" id="farmer-village">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">📍 जिल्हा</label>
+        <select class="form-select" id="farmer-district">
+          <option value="">जिल्हा निवडा</option>
+          <option>नाशिक</option>
+          <option>अहमदनगर</option>
+          <option>पुणे</option>
+          <option>सोलापूर</option>
+          <option>धुळे</option>
+          <option>जळगाव</option>
+          <option>औरंगाबाद</option>
+          <option>उस्मानाबाद</option>
+          <option>सातारा</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">📐 शेत क्षेत्र (एकर)</label>
+        <input type="number" class="form-input" placeholder="उदा. 2.5" id="farm-area">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">🌍 जमिनीचा प्रकार</label>
+        <div class="option-chips">
+          <button class="option-chip active" onclick="selectChip(this)">काळी माती</button>
+          <button class="option-chip" onclick="selectChip(this)">लाल माती</button>
+          <button class="option-chip" onclick="selectChip(this)">हलकी माती</button>
+          <button class="option-chip" onclick="selectChip(this)">मिश्र</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">🧅 कांद्याचा प्रकार</label>
+        <div class="option-chips">
+          <button class="option-chip active" onclick="selectChip(this)">लाल कांदा</button>
+          <button class="option-chip" onclick="selectChip(this)">पांढरा कांदा</button>
+          <button class="option-chip" onclick="selectChip(this)">उन्हाळी</button>
+          <button class="option-chip" onclick="selectChip(this)">खरीप</button>
+          <button class="option-chip" onclick="selectChip(this)">रांगडा</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">📅 लागवड तारीख</label>
+        <input type="date" class="form-input" id="sowing-date">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">💧 सिंचन पद्धत</label>
+        <div class="option-chips">
+          <button class="option-chip active" onclick="selectChip(this)">ठिबक</button>
+          <button class="option-chip" onclick="selectChip(this)">तुषार</button>
+          <button class="option-chip" onclick="selectChip(this)">पाट</button>
+          <button class="option-chip" onclick="selectChip(this)">पावसावर</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="form-label" style="font-size:15px;">🧅 तुम्हाला कोणत्या प्रकारचा कांदा तयार करायचा आहे?</p>
+      <div class="option-chips" style="margin-top:8px; margin-bottom:16px;">
+        <button class="option-chip active" onclick="selectChip(this)">मोठा / Preferred</button>
+        <button class="option-chip" onclick="selectChip(this)">मध्यम / Average</button>
+        <button class="option-chip" onclick="selectChip(this)">साठवणूक / Storage</button>
+      </div>
+
+      <div class="disclaimer">
+        <span class="disclaimer-icon">ℹ️</span>
+        <span>हे अॅप कांद्याची हमी उत्पादन किंवा हमी बाजार भाव देत नाही. AI मार्गदर्शन तज्ञ सल्ल्याचा पर्याय नाही.</span>
+      </div>
+
+      <button class="btn btn-primary btn-lg btn-block mt-16" onclick="navigateTo('screen-home')">
+        <span class="btn-icon">✅</span> नोंदणी पूर्ण करा
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 3 — FARMER HOME DASHBOARD ===== -->
+  <div class="screen" id="screen-home">
+    <div class="app-header">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;">
+        <div class="app-logo" style="width:36px;height:36px;font-size:20px;border-radius:10px;margin:0;animation:none;">🧅</div>
+        <h2 class="header-title" style="font-size:16px;">कांदा स्मार्ट AI</h2>
+      </div>
+      <div class="header-actions">
+        <button class="header-icon-btn" onclick="navigateTo('screen-reminders')" title="सूचना">🔔</button>
+        <button class="header-icon-btn" onclick="navigateTo('screen-onboarding')" title="भाषा">🌐</button>
+      </div>
+    </div>
+
+    <!-- Crop Status Banner -->
+    <div class="crop-banner">
+      <div class="crop-banner-greeting">🙏 नमस्कार, शेतकरी!</div>
+      <p style="font-size:13px; opacity:0.9;">तुमच्या कांद्याची आजची स्थिती</p>
+      <div class="crop-banner-info">
+        <div class="crop-info-item">
+          <span class="crop-info-label">पीक</span>
+          <span class="crop-info-value">🧅 कांदा</span>
+        </div>
+        <div class="crop-info-item">
+          <span class="crop-info-label">पीक वय</span>
+          <span class="crop-info-value">दिवस ७२</span>
+        </div>
+        <div class="crop-info-item">
+          <span class="crop-info-label">सध्याचा टप्पा</span>
+          <span class="crop-info-value">कांदा वाढ</span>
+        </div>
+        <div class="crop-info-item">
+          <span class="crop-info-label">पीक आरोग्य</span>
+          <span class="crop-info-value">✅ चांगले</span>
+        </div>
+      </div>
+      <div class="progress-bar" style="margin-top:14px;">
+        <div class="progress-fill" style="width: 60%;"></div>
+      </div>
+      <p style="font-size:11px; opacity:0.7; margin-top:6px; text-align:right;">६० % पूर्ण</p>
+    </div>
+
+    <!-- Weather -->
+    <div class="weather-strip">
+      <span class="weather-icon">⛅</span>
+      <div class="weather-info">
+        <span class="weather-temp">३२°C — अंशतः ढगाळ</span>
+        <span class="weather-desc">आर्द्रता ६५% • वारा ८ km/h</span>
+      </div>
+    </div>
+
+    <!-- Next Action -->
+    <div class="action-strip" onclick="navigateTo('screen-monitoring')">
+      <span class="action-strip-icon">📋</span>
+      <div class="action-strip-text">
+        <div class="action-strip-title">पुढील कार्य: सिंचनाची तपासणी</div>
+        <div class="action-strip-desc">पुढील तपासणी: आज संध्याकाळी ५:०० वाजता</div>
+      </div>
+      <span style="color:var(--gray-400);">→</span>
+    </div>
+
+    <!-- Dashboard Grid -->
+    <div class="section-title px-16" style="margin-top:8px;">
+      <span>📌</span> मुख्य सेवा
+    </div>
+    <div class="dashboard-grid">
+      <div class="dash-card" onclick="navigateTo('screen-lifecycle')">
+        <div class="dash-card-icon green">🌱</div>
+        <div class="dash-card-label">पीक जीवनचक्र</div>
+      </div>
+      <div class="dash-card" onclick="navigateTo('screen-quality-scan')">
+        <div class="dash-card-icon purple">📸</div>
+        <div class="dash-card-label">कांदा तपासा</div>
+      </div>
+      <div class="dash-card" onclick="navigateTo('screen-map')">
+        <div class="dash-card-icon blue">🗺️</div>
+        <div class="dash-card-label">परिसर गुणवत्ता</div>
+      </div>
+      <div class="dash-card" onclick="navigateTo('screen-chatbot')">
+        <div class="dash-card-icon yellow">🤖</div>
+        <div class="dash-card-label">कांदा मित्र</div>
+      </div>
+      <div class="dash-card" onclick="navigateTo('screen-market')">
+        <div class="dash-card-icon teal">💰</div>
+        <div class="dash-card-label">बाजार भाव</div>
+      </div>
+      <div class="dash-card" onclick="navigateTo('screen-support')">
+        <div class="dash-card-icon red">🏛️</div>
+        <div class="dash-card-label">सरकारी मदत</div>
+      </div>
+      <div class="dash-card" onclick="navigateTo('screen-reports')">
+        <div class="dash-card-icon blue">📊</div>
+        <div class="dash-card-label">माझे अहवाल</div>
+      </div>
+      <div class="dash-card" onclick="navigateTo('screen-monitoring')">
+        <div class="dash-card-icon green">🔍</div>
+        <div class="dash-card-label">पीक तपासणी</div>
+      </div>
+    </div>
+
+    <div class="spacer-16"></div>
+
+    <!-- Reminders preview -->
+    <div class="section-title px-16"><span>🔔</span> आजच्या सूचना</div>
+    <div class="reminder-card">
+      <span class="reminder-icon">📸</span>
+      <span class="reminder-text">आज पिकाचा फोटो तपासा</span>
+      <span class="reminder-time">आज</span>
+    </div>
+    <div class="reminder-card">
+      <span class="reminder-icon">💧</span>
+      <span class="reminder-text">सिंचनाची स्थिती तपासा</span>
+      <span class="reminder-time">संध्या. ५:००</span>
+    </div>
+
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 4 — CROP LIFECYCLE ===== -->
+  <div class="screen" id="screen-lifecycle">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-home')">←</button>
+      <h2 class="header-title">🌱 कांदा पीक जीवनचक्र</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <div class="section" style="padding-bottom:8px;">
+      <p style="font-size:14px; color:var(--gray-500);">पेरणीपासून बाजारापर्यंत — प्रत्येक टप्पा</p>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item completed">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">🌰 बियाणे निवड</div>
+          <div class="timeline-meta">दिवस ० — पूर्ण</div>
+          <div class="timeline-details">
+            <span class="timeline-tag">✅ पूर्ण</span>
+            <span class="timeline-tag">दर्जेदार बियाणे</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">🌿 रोपवाटिका / पेरणी</div>
+          <div class="timeline-meta">दिवस ०–२० — पूर्ण</div>
+          <div class="timeline-details">
+            <span class="timeline-tag">✅ पूर्ण</span>
+            <span class="timeline-tag">💧 नियमित पाणी</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">🌱 लागवड / प्रत्यारोपण</div>
+          <div class="timeline-meta">दिवस २०–३५ — पूर्ण</div>
+          <div class="timeline-details">
+            <span class="timeline-tag">✅ पूर्ण</span>
+            <span class="timeline-tag">योग्य अंतर</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">🌿 वनस्पती वाढ</div>
+          <div class="timeline-meta">दिवस ३५–५५ — पूर्ण</div>
+          <div class="timeline-details">
+            <span class="timeline-tag">✅ पूर्ण</span>
+            <span class="timeline-tag">पाने चांगली</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item completed">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">🧅 कांदा सुरूवात</div>
+          <div class="timeline-meta">दिवस ५५–६५ — पूर्ण</div>
+          <div class="timeline-details">
+            <span class="timeline-tag">✅ पूर्ण</span>
+            <span class="timeline-tag">बल्ब दिसू लागला</span>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item current">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">🧅 कांदा वाढ (Bulb Development)</div>
+          <div class="timeline-meta">दिवस ६५–९० — सध्या सुरू (दिवस ७२)</div>
+          <p style="font-size:13px; color:var(--gray-600); margin-top:6px;">
+            📌 <strong>शेतकऱ्यांसाठी:</strong> कांदा आता मोठा होतो आहे. पाणी नियमित द्या. पिवळी पाने दिसल्यास फोटो काढा.
+          </p>
+          <div class="timeline-details">
+            <span class="timeline-tag" style="background:var(--onion-100);color:var(--onion-500);">📍 सध्या इथे</span>
+            <span class="timeline-tag">💧 नियमित सिंचन</span>
+            <span class="timeline-tag">🧪 खत द्या</span>
+            <span class="timeline-tag">🐛 कीड तपासा</span>
+          </div>
+          <div style="margin-top:10px;">
+            <button class="btn btn-sm btn-accent" onclick="navigateTo('screen-crop-analysis')">📸 फोटो अपलोड करा</button>
+          </div>
+        </div>
+      </div>
+      <div class="timeline-item upcoming">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">🟡 कांदा परिपक्वता</div>
+          <div class="timeline-meta">दिवस ९०–१०५</div>
+        </div>
+      </div>
+      <div class="timeline-item upcoming">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">🌾 काढणी (Harvest)</div>
+          <div class="timeline-meta">दिवस १०५–११०</div>
+        </div>
+      </div>
+      <div class="timeline-item upcoming">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">☀️ क्युरिंग / वाळवणे</div>
+          <div class="timeline-meta">दिवस ११०–१२०</div>
+        </div>
+      </div>
+      <div class="timeline-item upcoming">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">⚖️ ग्रेडिंग / वर्गीकरण</div>
+          <div class="timeline-meta">काढणी नंतर</div>
+        </div>
+      </div>
+      <div class="timeline-item upcoming">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">🏠 साठवणूक (Storage)</div>
+          <div class="timeline-meta">गरजेनुसार</div>
+        </div>
+      </div>
+      <div class="timeline-item upcoming">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="timeline-title">💰 बाजार (Market)</div>
+          <div class="timeline-meta">योग्य वेळी</div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 5 — DAILY/MONTHLY MONITORING ===== -->
+  <div class="screen" id="screen-monitoring">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-home')">←</button>
+      <h2 class="header-title">🔍 आजच्या पिकाची तपासणी</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <!-- Current Status Card -->
+    <div class="section">
+      <div class="card card-green">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span class="badge badge-purple">📍 कांदा वाढ टप्पा</span>
+          <span class="badge badge-green">✅ चांगले</span>
+        </div>
+        <div class="health-indicators" style="padding:0;">
+          <div class="health-item">
+            <span class="health-icon">📆</span>
+            <div class="health-info">
+              <span class="health-label">लागवडीनंतर</span>
+              <span class="health-value">दिवस ७२</span>
+            </div>
+          </div>
+          <div class="health-item">
+            <span class="health-icon">⛅</span>
+            <div class="health-info">
+              <span class="health-label">हवामान</span>
+              <span class="health-value">३२°C</span>
+            </div>
+          </div>
+          <div class="health-item">
+            <span class="health-icon">💧</span>
+            <div class="health-info">
+              <span class="health-label">माती ओलावा</span>
+              <span class="health-value">चांगला</span>
+            </div>
+          </div>
+          <div class="health-item">
+            <span class="health-icon">🌱</span>
+            <div class="health-info">
+              <span class="health-label">पीक आरोग्य</span>
+              <span class="health-value" style="color:var(--green-600);">चांगले</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next Task -->
+    <div class="action-strip">
+      <span class="action-strip-icon">📋</span>
+      <div class="action-strip-text">
+        <div class="action-strip-title">पुढील कार्य: खत वापरणी</div>
+        <div class="action-strip-desc">पोटॅश खत — ५ दिवसांनंतर</div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="section">
+      <button class="btn btn-primary btn-block mb-8" onclick="navigateTo('screen-crop-analysis')">
+        <span class="btn-icon">📸</span> आजचा फोटो अपलोड करा
+      </button>
+      <button class="btn btn-secondary btn-block mb-8" onclick="showAnalysis()">
+        <span class="btn-icon">🔍</span> पिकाची स्थिती तपासा
+      </button>
+      <button class="btn btn-outline btn-block mb-8">
+        <span class="btn-icon">📅</span> पुढील तपासणी सेट करा
+      </button>
+    </div>
+
+    <!-- Monitoring Frequency -->
+    <div class="section-title px-16"><span>⏰</span> तपासणी वारंवारता</div>
+    <div class="freq-options">
+      <div class="freq-option" onclick="selectFreq(this)">
+        <div class="freq-icon">📅</div>
+        <div class="freq-label">दररोज</div>
+      </div>
+      <div class="freq-option active" onclick="selectFreq(this)">
+        <div class="freq-icon">📆</div>
+        <div class="freq-label">दर ३ दिवसांनी</div>
+      </div>
+      <div class="freq-option" onclick="selectFreq(this)">
+        <div class="freq-icon">🗓️</div>
+        <div class="freq-label">साप्ताहिक</div>
+      </div>
+      <div class="freq-option" onclick="selectFreq(this)">
+        <div class="freq-icon">📋</div>
+        <div class="freq-label">मासिक</div>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <span class="disclaimer-icon">ℹ️</span>
+      <span>AI निरीक्षण हा तज्ञ सल्ल्याचा पर्याय नाही. गंभीर समस्यांसाठी कृषी तज्ञांशी संपर्क साधा.</span>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 6 — AI CROP IMAGE ANALYSIS ===== -->
+  <div class="screen" id="screen-crop-analysis">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-monitoring')">←</button>
+      <h2 class="header-title">📸 पिकाचा फोटो तपासा</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <div class="section">
+      <div class="upload-area" onclick="simulateUpload('crop')">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">कांद्याच्या पिकाचा फोटो अपलोड करा</div>
+        <div class="upload-subtext">पान, कांदा, किंवा शेताचा फोटो काढा</div>
+        <div class="upload-buttons">
+          <button class="btn btn-primary btn-sm">📸 फोटो काढा</button>
+          <button class="btn btn-secondary btn-sm">📁 फोटो अपलोड करा</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Simulated Analysis Result -->
+    <div id="crop-analysis-result" style="display:none;">
+      <div class="section-title px-16"><span>🔬</span> AI विश्लेषण निकाल</div>
+      
+      <div class="analysis-result" style="background:var(--green-50);">
+        <div class="analysis-dot" style="background:var(--green-500);"></div>
+        <span class="analysis-label">पीक आरोग्य</span>
+        <span class="analysis-value" style="color:var(--green-600);">चांगले</span>
+      </div>
+      <div class="analysis-result">
+        <div class="analysis-dot" style="background:var(--warning);"></div>
+        <span class="analysis-label">संभाव्य ताण</span>
+        <span class="analysis-value">सौम्य पाणी ताण</span>
+      </div>
+      <div class="analysis-result">
+        <div class="analysis-dot" style="background:var(--green-400);"></div>
+        <span class="analysis-label">रोग/कीड</span>
+        <span class="analysis-value" style="color:var(--green-600);">आढळले नाही</span>
+      </div>
+      <div class="analysis-result">
+        <div class="analysis-dot" style="background:var(--info);"></div>
+        <span class="analysis-label">वाढ टप्पा</span>
+        <span class="analysis-value">कांदा वाढ</span>
+      </div>
+
+      <div class="confidence-meter" style="margin:12px 16px;">
+        <span style="font-size:13px;">🎯 विश्वसनीयता:</span>
+        <div class="confidence-bar">
+          <div class="confidence-fill" style="width:87%;"></div>
+        </div>
+        <span class="confidence-text">८७%</span>
+      </div>
+
+      <div class="section" style="padding-top:8px;">
+        <div class="card card-green">
+          <p style="font-weight:700; margin-bottom:4px;">💡 आता काय करावे?</p>
+          <p style="font-size:13px; color:var(--gray-600);">पाण्याचे नियमित शेड्यूल ठेवा. सौम्य पाणी ताण दिसत आहे — ठिबक सिंचन तपासा.</p>
+        </div>
+      </div>
+
+      <div class="alert-card info" style="margin-bottom:8px;">
+        <span class="alert-icon">👨‍🌾</span>
+        <div class="alert-content">
+          <div class="alert-title">तज्ञ सल्ला</div>
+          <div class="alert-desc">तज्ञांचा सल्ला आवश्यक असल्यास तज्ञाकडे पाठवा</div>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <span class="disclaimer-icon">⚠️</span>
+        <span>हे AI निरीक्षण आहे. कीटकनाशक वापरण्यापूर्वी कृषी तज्ञांचा सल्ला घ्या. असुरक्षित शिफारसी देत नाही.</span>
+      </div>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 7 — QUALITY SCANNER ===== -->
+  <div class="screen" id="screen-quality-scan">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-home')">←</button>
+      <h2 class="header-title">🧅 कांद्याची गुणवत्ता तपासा</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <div class="section">
+      <div class="upload-area" onclick="simulateUpload('quality')">
+        <div class="upload-icon">🧅</div>
+        <div class="upload-text">कांद्याचा फोटो अपलोड करा</div>
+        <div class="upload-subtext">एक किंवा अनेक कांदे फोटोमध्ये दाखवा</div>
+        <div class="upload-buttons">
+          <button class="btn btn-primary btn-sm">📸 फोटो काढा</button>
+          <button class="btn btn-secondary btn-sm">📁 अपलोड करा</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Visual quality examples -->
+    <div class="section-title px-16" style="margin-top:8px;"><span>📖</span> गुणवत्ता ओळखा</div>
+    <div class="section" style="padding-top:0;">
+      <img src="assets/onion_quality_samples.jpg" alt="Onion quality samples" style="border-radius:var(--radius-lg); border:1px solid var(--gray-200); margin-bottom:12px;">
+      
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+        <div style="text-align:center; padding:8px; background:var(--green-50); border-radius:var(--radius-md);">
+          <div style="font-size:20px;">✅</div>
+          <div style="font-size:12px; font-weight:600; color:var(--green-700);">चांगला</div>
+        </div>
+        <div style="text-align:center; padding:8px; background:#fef3c7; border-radius:var(--radius-md);">
+          <div style="font-size:20px;">⚠️</div>
+          <div style="font-size:12px; font-weight:600; color:#92400e;">खराब</div>
+        </div>
+        <div style="text-align:center; padding:8px; background:#fee2e2; border-radius:var(--radius-md);">
+          <div style="font-size:20px;">❌</div>
+          <div style="font-size:12px; font-weight:600; color:#991b1b;">सडलेला</div>
+        </div>
+        <div style="text-align:center; padding:8px; background:var(--onion-50); border-radius:var(--radius-md);">
+          <div style="font-size:20px;">🌱</div>
+          <div style="font-size:12px; font-weight:600; color:var(--onion-500);">अंकुरलेला</div>
+        </div>
+        <div style="text-align:center; padding:8px; background:#e0f2fe; border-radius:var(--radius-md);">
+          <div style="font-size:20px;">📏</div>
+          <div style="font-size:12px; font-weight:600; color:#1e40af;">लहान</div>
+        </div>
+        <div style="text-align:center; padding:8px; background:var(--gray-50); border-radius:var(--radius-md);">
+          <div style="font-size:20px;">🔍</div>
+          <div style="font-size:12px; font-weight:600; color:var(--gray-600);">दोष</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" style="padding-top:0;">
+      <button class="btn btn-primary btn-block" onclick="navigateTo('screen-quality-result')">
+        <span class="btn-icon">🔬</span> गुणवत्ता तपासा
+      </button>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 8 — QUALITY RESULT ===== -->
+  <div class="screen" id="screen-quality-result">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-quality-scan')">←</button>
+      <h2 class="header-title">📊 गुणवत्ता अहवाल</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <div class="section text-center">
+      <div class="quality-gauge">
+        <div class="quality-gauge-inner">
+          <span class="quality-grade">Grade A</span>
+          <span class="quality-score">82%</span>
+          <span class="quality-label">गुणवत्ता: चांगली</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quality-breakdown px-16">
+      <div class="quality-stat good">
+        <div class="quality-stat-value">82%</div>
+        <div class="quality-stat-label">Grade A (चांगला)</div>
+      </div>
+      <div class="quality-stat warning">
+        <div class="quality-stat-value">12%</div>
+        <div class="quality-stat-label">URS (अनिश्चित)</div>
+      </div>
+      <div class="quality-stat danger">
+        <div class="quality-stat-value">4%</div>
+        <div class="quality-stat-label">खराब / Damaged</div>
+      </div>
+      <div class="quality-stat accent">
+        <div class="quality-stat-value">2%</div>
+        <div class="quality-stat-label">अंकुरलेला</div>
+      </div>
+    </div>
+
+    <!-- Size & Uniformity -->
+    <div class="section">
+      <div class="card" style="margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:13px; color:var(--gray-500);">सरासरी आकार</div>
+            <div style="font-size:24px; font-weight:800; color:var(--green-700);">6.4 cm</div>
+          </div>
+          <div>
+            <div style="font-size:13px; color:var(--gray-500);">एकसमानता</div>
+            <div style="font-size:24px; font-weight:800; color:var(--green-700);">86%</div>
+          </div>
+          <div>
+            <div style="font-size:13px; color:var(--gray-500);">गुणवत्ता</div>
+            <div style="font-size:24px; font-weight:800; color:var(--green-600);">चांगली</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Size Distribution -->
+    <div class="section-title px-16"><span>📏</span> आकार वितरण</div>
+    <div class="onion-sizes">
+      <div class="onion-size">
+        <div class="onion-visual large">L</div>
+        <div class="size-label">मोठा</div>
+        <div class="size-pct">38%</div>
+      </div>
+      <div class="onion-size">
+        <div class="onion-visual medium">M</div>
+        <div class="size-label">मध्यम</div>
+        <div class="size-pct">44%</div>
+      </div>
+      <div class="onion-size">
+        <div class="onion-visual small">S</div>
+        <div class="size-label">लहान</div>
+        <div class="size-pct">18%</div>
+      </div>
+    </div>
+
+    <!-- Simple explanation -->
+    <div class="section">
+      <div class="card card-green">
+        <p style="font-weight:700; margin-bottom:4px;">💡 शेतकऱ्यांसाठी सोपे स्पष्टीकरण</p>
+        <p style="font-size:13px; color:var(--gray-600); line-height:1.6;">
+          तुमच्या १०० कांद्यांपैकी ८२ कांदे चांगल्या दर्जाचे आहेत. बहुतेक कांदे मध्यम आकाराचे आहेत. एकूण गुणवत्ता चांगली आहे!
+        </p>
+      </div>
+    </div>
+
+    <div class="section" style="padding-top:0;">
+      <button class="btn btn-primary btn-block mb-8">
+        <span class="btn-icon">📄</span> पूर्ण अहवाल
+      </button>
+      <button class="btn btn-secondary btn-block mb-8">
+        <span class="btn-icon">📑</span> PDF तयार करा
+      </button>
+      <button class="btn btn-outline btn-block" onclick="navigateTo('screen-size-target')">
+        <span class="btn-icon">🎯</span> आकार लक्ष्य तपासा
+      </button>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 9 — SIZE TARGET DASHBOARD ===== -->
+  <div class="screen" id="screen-size-target">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-quality-result')">←</button>
+      <h2 class="header-title">🎯 कांदा आकार लक्ष्य</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <div class="section text-center">
+      <p style="font-size:14px; color:var(--gray-500); margin-bottom:16px;">तुमचे लक्ष्य vs सध्याची स्थिती</p>
+    </div>
+
+    <div class="target-visual">
+      <div class="target-item">
+        <div class="target-circle target">
+          <span style="font-size:20px;">🎯</span>
+          <span style="font-size:11px;">मोठा</span>
+        </div>
+        <span class="target-label">लक्ष्य</span>
+      </div>
+      <span class="target-arrow">→</span>
+      <div class="target-item">
+        <div class="target-circle current">
+          <span style="font-size:20px;">🧅</span>
+          <span style="font-size:11px;">मध्यम</span>
+        </div>
+        <span class="target-label">सध्या</span>
+      </div>
+      <span class="target-arrow">→</span>
+      <div class="target-item">
+        <div class="target-circle action">
+          <span style="font-size:20px;">📋</span>
+          <span style="font-size:11px;">कृती</span>
+        </div>
+        <span class="target-label">पुढील कार्य</span>
+      </div>
+    </div>
+
+    <div class="section-title px-16"><span>📊</span> सध्याचे निर्देशक</div>
+    <div class="health-indicators">
+      <div class="health-item">
+        <span class="health-icon">🧅</span>
+        <div class="health-info">
+          <span class="health-label">कांदा वाढ</span>
+          <span class="health-value" style="color:var(--warning);">मध्यम</span>
+        </div>
+      </div>
+      <div class="health-item">
+        <span class="health-icon">📐</span>
+        <div class="health-info">
+          <span class="health-label">एकसमानता</span>
+          <span class="health-value" style="color:var(--green-600);">चांगली</span>
+        </div>
+      </div>
+      <div class="health-item">
+        <span class="health-icon">🌱</span>
+        <div class="health-info">
+          <span class="health-label">पीक आरोग्य</span>
+          <span class="health-value" style="color:var(--green-600);">चांगले</span>
+        </div>
+      </div>
+      <div class="health-item">
+        <span class="health-icon">💧</span>
+        <div class="health-info">
+          <span class="health-label">पाणी स्थिती</span>
+          <span class="health-value" style="color:var(--warning);">सौम्य ताण</span>
+        </div>
+      </div>
+      <div class="health-item">
+        <span class="health-icon">⛅</span>
+        <div class="health-info">
+          <span class="health-label">हवामान धोका</span>
+          <span class="health-value" style="color:var(--green-600);">कमी</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="card card-green">
+        <p style="font-weight:700; margin-bottom:4px;">💡 आता काय करावे?</p>
+        <p style="font-size:13px; color:var(--gray-600);">
+          मोठ्या आकाराच्या कांद्यासाठी नियमित पाणी आणि पोटॅश खत वापरा. अजून १५-२० दिवस वाढीसाठी आहेत.
+        </p>
+      </div>
+    </div>
+
+    <div class="disclaimer">
+      <span class="disclaimer-icon">ℹ️</span>
+      <span>हे अॅप मोठ्या कांद्याची किंवा उच्च बाजार भावाची हमी देत नाही. AI मार्गदर्शन म्हणून वापरा.</span>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 10 — REGIONAL MAP ===== -->
+  <div class="screen" id="screen-map">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-home')">←</button>
+      <h2 class="header-title">🗺️ परिसर गुणवत्ता नकाशा</h2>
+      <button class="header-icon-btn" onclick="navigateTo('screen-officer-dashboard')">👨‍💼</button>
+    </div>
+
+    <div class="section" style="padding-bottom:8px;">
+      <p style="font-size:14px; color:var(--gray-500);">तुमच्या परिसरातील कांद्याची गुणवत्ता</p>
+    </div>
+
+    <!-- District selector -->
+    <div class="filter-row">
+      <button class="filter-chip active">नाशिक</button>
+      <button class="filter-chip">अहमदनगर</button>
+      <button class="filter-chip">पुणे</button>
+      <button class="filter-chip">सोलापूर</button>
+      <button class="filter-chip">धुळे</button>
+      <button class="filter-chip">जळगाव</button>
+    </div>
+
+    <!-- Map -->
+    <div class="map-container">
+      <img src="assets/maharashtra_map.jpg" alt="Maharashtra Map" class="map-image">
+      <div class="map-overlay">
+        <div class="map-pin green" style="top:30%; left:35%;" title="नाशिक - चांगली"></div>
+        <div class="map-pin green" style="top:42%; left:42%;" title="अहमदनगर - चांगली"></div>
+        <div class="map-pin yellow" style="top:55%; left:35%;" title="पुणे - सरासरी"></div>
+        <div class="map-pin green" style="top:65%; left:48%;" title="सोलापूर - चांगली"></div>
+        <div class="map-pin red" style="top:25%; left:30%;" title="धुळे - समस्या"></div>
+        <div class="map-pin yellow" style="top:25%; left:45%;" title="जळगाव - सरासरी"></div>
+      </div>
+    </div>
+
+    <div class="map-legend">
+      <div class="legend-item"><div class="legend-dot green"></div> चांगली</div>
+      <div class="legend-item"><div class="legend-dot yellow"></div> सरासरी</div>
+      <div class="legend-item"><div class="legend-dot red"></div> समस्या</div>
+    </div>
+
+    <!-- District Info -->
+    <div class="district-info">
+      <div class="district-name">📍 नाशिक जिल्हा</div>
+      <div class="district-stats">
+        <div class="district-stat">
+          <div class="district-stat-value">चांगली</div>
+          <div class="district-stat-label">सरासरी गुणवत्ता</div>
+        </div>
+        <div class="district-stat">
+          <div class="district-stat-value">78%</div>
+          <div class="district-stat-label">Grade A टक्केवारी</div>
+        </div>
+        <div class="district-stat">
+          <div class="district-stat-value">6.2 cm</div>
+          <div class="district-stat-label">सरासरी आकार</div>
+        </div>
+        <div class="district-stat">
+          <div class="district-stat-value">कमी</div>
+          <div class="district-stat-label">गुणवत्ता समस्या</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <p style="font-size:13px; color:var(--gray-600);"><strong>सामान्य समस्या:</strong> थोडा पाणी ताण काही भागात</p>
+        <p style="font-size:13px; color:var(--gray-600); margin-top:4px;"><strong>शिफारस:</strong> नियमित सिंचन चालू ठेवा</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="card card-green">
+        <p style="font-weight:700; margin-bottom:4px;">📊 तुमची तुलना</p>
+        <p style="font-size:13px; color:var(--gray-600);">तुमच्या शेतातील गुणवत्ता (82%) नाशिक जिल्ह्याच्या सरासरीपेक्षा (78%) चांगली आहे!</p>
+      </div>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 11 — OFFICER DASHBOARD ===== -->
+  <div class="screen" id="screen-officer-dashboard">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-map')">←</button>
+      <h2 class="header-title">👨‍💼 अधिकारी डॅशबोर्ड</h2>
+    </div>
+
+    <div class="section" style="padding-bottom:8px;">
+      <span class="badge badge-blue">🔐 अधिकृत कृषी अधिकारी</span>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-row">
+      <button class="filter-chip active">नाशिक</button>
+      <button class="filter-chip">अहमदनगर</button>
+      <button class="filter-chip">सर्व जिल्हे</button>
+    </div>
+    <div class="filter-row">
+      <button class="filter-chip active">कांदा वाढ</button>
+      <button class="filter-chip">काढणी</button>
+      <button class="filter-chip">सर्व टप्पे</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="officer-stats" style="margin-top:12px;">
+      <div class="officer-stat" style="background:var(--green-50); border-radius:var(--radius-md);">
+        <div class="officer-stat-value" style="color:var(--green-700);">2,847</div>
+        <div class="officer-stat-label">एकूण शेतकरी</div>
+      </div>
+      <div class="officer-stat" style="background:var(--onion-50); border-radius:var(--radius-md);">
+        <div class="officer-stat-value" style="color:var(--onion-500);">78%</div>
+        <div class="officer-stat-label">सरासरी गुणवत्ता</div>
+      </div>
+      <div class="officer-stat" style="background:#e0f2fe; border-radius:var(--radius-md);">
+        <div class="officer-stat-value" style="color:var(--info);">6.1 cm</div>
+        <div class="officer-stat-label">सरासरी आकार</div>
+      </div>
+      <div class="officer-stat" style="background:#fef3c7; border-radius:var(--radius-md);">
+        <div class="officer-stat-value" style="color:var(--warning);">12</div>
+        <div class="officer-stat-label">धोक्याचे क्षेत्रे</div>
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div class="map-container">
+      <img src="assets/maharashtra_map.jpg" alt="Quality Heatmap" class="map-image" style="filter: saturate(1.3);">
+      <div class="map-overlay">
+        <div class="map-pin green" style="top:30%;left:35%;width:30px;height:30px;"></div>
+        <div class="map-pin green" style="top:42%;left:42%;width:26px;height:26px;"></div>
+        <div class="map-pin yellow" style="top:55%;left:35%;width:22px;height:22px;"></div>
+        <div class="map-pin red" style="top:25%;left:30%;width:20px;height:20px;"></div>
+      </div>
+    </div>
+
+    <!-- Quality Distribution -->
+    <div class="section-title px-16"><span>📊</span> गुणवत्ता वितरण</div>
+    <div class="bar-chart">
+      <div class="bar-item">
+        <div class="bar-value">68%</div>
+        <div class="bar" style="height:68%; background:var(--green-500);"></div>
+        <div class="bar-label">चांगली</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">20%</div>
+        <div class="bar" style="height:20%; background:var(--warning);"></div>
+        <div class="bar-label">सरासरी</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">8%</div>
+        <div class="bar" style="height:8%; background:var(--danger);"></div>
+        <div class="bar-label">कमी</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">4%</div>
+        <div class="bar" style="height:4%; background:var(--gray-400);"></div>
+        <div class="bar-label">धोका</div>
+      </div>
+    </div>
+
+    <!-- Crop Stage Distribution -->
+    <div class="section-title px-16"><span>🌱</span> टप्पा वितरण</div>
+    <div class="bar-chart">
+      <div class="bar-item">
+        <div class="bar-value">15%</div>
+        <div class="bar" style="height:15%; background:var(--green-300);"></div>
+        <div class="bar-label">वाढ</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">42%</div>
+        <div class="bar" style="height:42%; background:var(--green-500);"></div>
+        <div class="bar-label">कांदा वाढ</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">28%</div>
+        <div class="bar" style="height:28%; background:var(--onion-400);"></div>
+        <div class="bar-label">परिपक्वता</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">15%</div>
+        <div class="bar" style="height:15%; background:var(--earth-500);"></div>
+        <div class="bar-label">काढणी</div>
+      </div>
+    </div>
+
+    <!-- Regional Alerts -->
+    <div class="section-title px-16"><span>⚠️</span> क्षेत्रीय सूचना</div>
+    <div class="alert-card warning">
+      <span class="alert-icon">⚠️</span>
+      <div class="alert-content">
+        <div class="alert-title">धुळे — गुणवत्ता समस्या</div>
+        <div class="alert-desc">पाणी ताण आणि रोग नोंदी वाढल्या</div>
+      </div>
+    </div>
+    <div class="alert-card info">
+      <span class="alert-icon">📊</span>
+      <div class="alert-content">
+        <div class="alert-title">नाशिक — उत्तम कामगिरी</div>
+        <div class="alert-desc">78% Grade A — सर्वोच्च सरासरी</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <button class="btn btn-primary btn-block">📥 अहवाल डाउनलोड करा</button>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 12 — AI CHATBOT ===== -->
+  <div class="screen" id="screen-chatbot" style="padding-bottom:0;">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-home')">←</button>
+      <div style="display:flex;align-items:center;gap:10px;flex:1;">
+        <img src="assets/chatbot_avatar.jpg" alt="कांदा मित्र" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+        <div>
+          <h2 class="header-title" style="font-size:16px; line-height:1.2;">कांदा मित्र 🤖</h2>
+          <span style="font-size:11px; color:var(--green-600);">● ऑनलाइन</span>
+        </div>
+      </div>
+      <button class="header-icon-btn">🌐</button>
+    </div>
+
+    <div class="chat-container">
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-message bot">
+          <img src="assets/chatbot_avatar.jpg" alt="" class="chat-avatar">
+          <div class="chat-bubble">
+            🙏 नमस्कार! मी <strong>कांदा मित्र</strong> — तुमचा AI मदतनीस.<br><br>
+            तुम्ही मला कांद्याबद्दल कोणताही प्रश्न विचारू शकता. मी मराठी, हिंदी आणि English मध्ये बोलतो!<br><br>
+            तुम्हाला काय जाणून घ्यायचे आहे? 👇
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-suggestions" id="chat-suggestions">
+        <button class="chat-suggestion" onclick="sendSuggestion('माझ्या कांद्याची पाने पिवळी का झाली?')">🍂 पाने पिवळी का?</button>
+        <button class="chat-suggestion" onclick="sendSuggestion('पाणी कधी द्यावे?')">💧 पाणी कधी?</button>
+        <button class="chat-suggestion" onclick="sendSuggestion('माझा कांदा काढणीसाठी तयार आहे का?')">🌾 काढणी तयार?</button>
+        <button class="chat-suggestion" onclick="sendSuggestion('कांद्याची गुणवत्ता कशी सुधारू?')">📈 गुणवत्ता सुधारा</button>
+        <button class="chat-suggestion" onclick="sendSuggestion('माझ्या भागात कांद्याची गुणवत्ता कशी आहे?')">🗺️ भागातील गुणवत्ता</button>
+        <button class="chat-suggestion" onclick="sendSuggestion('किंमत कमी असेल तर कोणती सरकारी मदत उपलब्ध आहे?')">🏛️ सरकारी मदत</button>
+      </div>
+
+      <div class="chat-input-area">
+        <button class="chat-upload-btn" title="फोटो पाठवा">📷</button>
+        <input type="text" class="chat-input" placeholder="तुमचा प्रश्न लिहा..." id="chat-input" onkeypress="if(event.key==='Enter')sendChat()">
+        <button class="btn-voice" onclick="startVoice()" title="बोला">🎙️</button>
+        <button class="chat-send" onclick="sendChat()" title="पाठवा">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 13 — MARKET & PRICE ===== -->
+  <div class="screen" id="screen-market">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-home')">←</button>
+      <h2 class="header-title">💰 आजचा बाजार आढावा</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <!-- Market selector -->
+    <div class="scroll-tabs" style="margin-top:8px;">
+      <button class="tab-pill active">लासलगाव</button>
+      <button class="tab-pill">पिंपळगाव</button>
+      <button class="tab-pill">मनमाड</button>
+      <button class="tab-pill">नेवासा</button>
+      <button class="tab-pill">राहुरी</button>
+    </div>
+
+    <!-- Main price card -->
+    <div class="market-price-card" style="margin-top:12px;">
+      <div class="market-header">
+        <span class="market-name">🏪 लासलगाव बाजार</span>
+        <span class="market-badge up">📈 +₹200</span>
+      </div>
+      <div class="market-price">₹2,850 <span class="market-unit">/ क्विंटल</span></div>
+      <p style="font-size:12px; color:var(--gray-500); margin-top:4px;">आजची किंमत — कांदा (लाल)</p>
+      <div class="market-trend">
+        <div class="trend-bar low" style="height:35%;"></div>
+        <div class="trend-bar low" style="height:40%;"></div>
+        <div class="trend-bar mid" style="height:50%;"></div>
+        <div class="trend-bar mid" style="height:55%;"></div>
+        <div class="trend-bar mid" style="height:45%;"></div>
+        <div class="trend-bar high" style="height:65%;"></div>
+        <div class="trend-bar high" style="height:75%;"></div>
+        <div class="trend-bar high" style="height:80%;"></div>
+        <div class="trend-bar high" style="height:70%;"></div>
+        <div class="trend-bar high" style="height:85%;"></div>
+      </div>
+      <p style="font-size:11px; color:var(--gray-400); margin-top:6px; text-align:center;">← मागील १० दिवसांचा ट्रेंड →</p>
+    </div>
+
+    <!-- Price range -->
+    <div class="section">
+      <div class="card-flat card" style="margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between;">
+          <div style="text-align:center; flex:1;">
+            <div style="font-size:12px; color:var(--gray-500);">किमान</div>
+            <div style="font-size:18px; font-weight:800; color:var(--danger);">₹1,800</div>
+          </div>
+          <div style="text-align:center; flex:1;">
+            <div style="font-size:12px; color:var(--gray-500);">सरासरी</div>
+            <div style="font-size:18px; font-weight:800; color:var(--warning);">₹2,400</div>
+          </div>
+          <div style="text-align:center; flex:1;">
+            <div style="font-size:12px; color:var(--gray-500);">कमाल</div>
+            <div style="font-size:18px; font-weight:800; color:var(--green-600);">₹3,200</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quality-wise info -->
+    <div class="section-title px-16"><span>📊</span> गुणवत्तेनुसार भाव</div>
+    <div class="section" style="padding-top:0;">
+      <div class="card-flat card" style="margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:14px; font-weight:600;">Grade A (चांगला)</span>
+          <span style="font-size:16px; font-weight:800; color:var(--green-600);">₹2,800–₹3,200</span>
+        </div>
+      </div>
+      <div class="card-flat card" style="margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:14px; font-weight:600;">मध्यम गुणवत्ता</span>
+          <span style="font-size:16px; font-weight:800; color:var(--warning);">₹2,000–₹2,600</span>
+        </div>
+      </div>
+      <div class="card-flat card" style="margin-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:14px; font-weight:600;">कमी गुणवत्ता</span>
+          <span style="font-size:16px; font-weight:800; color:var(--danger);">₹1,200–₹1,800</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" style="padding-top:0;">
+      <button class="btn btn-secondary btn-block mb-8" onclick="navigateTo('screen-low-price')">
+        <span class="btn-icon">⚠️</span> किंमत कमी असल्यास पर्याय तपासा
+      </button>
+      <button class="btn btn-outline btn-block">
+        <span class="btn-icon">📊</span> जवळच्या बाजारांची तुलना
+      </button>
+    </div>
+
+    <div class="disclaimer">
+      <span class="disclaimer-icon">ℹ️</span>
+      <span>बाजार भाव दररोज बदलतात. भविष्यातील भावाची हमी दिली जात नाही.</span>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 14 — GOVERNMENT SUPPORT ===== -->
+  <div class="screen" id="screen-support">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-home')">←</button>
+      <h2 class="header-title">🏛️ सरकारी मदत / योजना</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <div class="section" style="padding-bottom:8px;">
+      <div class="card card-green text-center">
+        <span style="font-size:28px;">🏛️</span>
+        <p style="font-weight:600; margin-top:6px;">तुमच्यासाठी उपलब्ध सरकारी योजना शोधा</p>
+        <p style="font-size:12px; color:var(--gray-500);">तुमच्या स्थान, पीक आणि स्थितीनुसार</p>
+      </div>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="scroll-tabs">
+      <button class="tab-pill active">सर्व</button>
+      <button class="tab-pill">खरेदी / Procurement</button>
+      <button class="tab-pill">साठवणूक</button>
+      <button class="tab-pill">विमा</button>
+      <button class="tab-pill">निविष्ठा</button>
+    </div>
+
+    <!-- Scheme Cards -->
+    <div class="scheme-card">
+      <div class="scheme-icon" style="background:var(--green-100);">🏪</div>
+      <div class="scheme-name">कांदा खरेदी योजना (NAFED)</div>
+      <div class="scheme-desc">शेतकऱ्यांकडून थेट कांदा खरेदी — बाजार भाव कमी असताना उपलब्ध</div>
+      <div class="scheme-tags">
+        <span class="scheme-tag">📍 नाशिक</span>
+        <span class="scheme-tag">🧅 कांदा</span>
+        <span class="scheme-tag">✅ पात्र</span>
+      </div>
+      <div style="font-size:12px; color:var(--gray-500); margin-bottom:8px;">
+        <p><strong>पात्रता:</strong> कांदा उत्पादक शेतकरी</p>
+        <p><strong>कागदपत्रे:</strong> आधार, ७/१२, फोटो</p>
+        <p><strong>स्थिती:</strong> <span style="color:var(--green-600); font-weight:600;">अर्ज सुरू</span></p>
+      </div>
+      <button class="btn btn-sm btn-primary">अधिक माहिती →</button>
+    </div>
+
+    <div class="scheme-card">
+      <div class="scheme-icon" style="background:#e0f2fe;">🏠</div>
+      <div class="scheme-name">कांदा चाळ अनुदान</div>
+      <div class="scheme-desc">कांदा साठवणूक चाळ बांधकामासाठी ५०% अनुदान</div>
+      <div class="scheme-tags">
+        <span class="scheme-tag">🏠 साठवणूक</span>
+        <span class="scheme-tag">💰 50% अनुदान</span>
+      </div>
+      <div style="font-size:12px; color:var(--gray-500); margin-bottom:8px;">
+        <p><strong>फायदा:</strong> ₹1.75 लाख पर्यंत अनुदान</p>
+        <p><strong>कागदपत्रे:</strong> आधार, ७/१२, बँक पासबुक</p>
+      </div>
+      <button class="btn btn-sm btn-secondary">अधिक माहिती →</button>
+    </div>
+
+    <div class="scheme-card">
+      <div class="scheme-icon" style="background:#fef3c7;">🛡️</div>
+      <div class="scheme-name">प्रधानमंत्री फसल बीमा योजना</div>
+      <div class="scheme-desc">पीक नुकसान भरपाईसाठी विमा योजना — नैसर्गिक आपत्ती, कीड, रोग</div>
+      <div class="scheme-tags">
+        <span class="scheme-tag">🛡️ विमा</span>
+        <span class="scheme-tag">🇮🇳 केंद्र सरकार</span>
+      </div>
+      <div style="font-size:12px; color:var(--gray-500); margin-bottom:8px;">
+        <p><strong>प्रीमियम:</strong> ₹2% / खरीप</p>
+        <p><strong>स्थिती:</strong> <span style="color:var(--green-600); font-weight:600;">नोंदणी सुरू</span></p>
+      </div>
+      <button class="btn btn-sm btn-secondary">अधिक माहिती →</button>
+    </div>
+
+    <div class="scheme-card">
+      <div class="scheme-icon" style="background:var(--onion-50);">🧪</div>
+      <div class="scheme-name">शेतमाल निविष्ठा अनुदान</div>
+      <div class="scheme-desc">बियाणे, खते, कीटकनाशके यावर सबसिडी</div>
+      <div class="scheme-tags">
+        <span class="scheme-tag">🧪 निविष्ठा</span>
+        <span class="scheme-tag">💰 अनुदान</span>
+      </div>
+      <button class="btn btn-sm btn-secondary" style="margin-top:8px;">अधिक माहिती →</button>
+    </div>
+
+    <div class="disclaimer">
+      <span class="disclaimer-icon">ℹ️</span>
+      <span>योजना व नियम वेळोवेळी बदलू शकतात. अधिकृत माहितीसाठी कृषी कार्यालयाशी संपर्क साधा.</span>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 15 — LOW PRICE ALERT ===== -->
+  <div class="screen" id="screen-low-price">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-market')">←</button>
+      <h2 class="header-title">⚠️ बाजारभाव कमी आहे</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <div class="section">
+      <div class="card card-warning text-center">
+        <span style="font-size:48px;">⚠️</span>
+        <h3 style="font-size:18px; font-weight:700; margin-top:8px;">बाजारभाव कमी आहे</h3>
+        <p style="font-size:14px; color:var(--gray-600); margin-top:4px;">घाबरू नका — पुढील पर्याय तपासा</p>
+      </div>
+    </div>
+
+    <div class="section-title px-16"><span>📋</span> तुमच्यासाठी पर्याय</div>
+
+    <div class="report-card" onclick="navigateTo('screen-support')">
+      <div class="report-icon" style="background:var(--green-100);">🏛️</div>
+      <div class="report-info">
+        <div class="report-name">सरकारी मदत तपासा</div>
+        <div class="report-desc">उपलब्ध खरेदी, अनुदान योजना</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="report-card">
+      <div class="report-icon" style="background:#e0f2fe;">🏪</div>
+      <div class="report-info">
+        <div class="report-name">खरेदी पर्याय तपासा</div>
+        <div class="report-desc">NAFED, राज्य खरेदी केंद्रे</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="report-card">
+      <div class="report-icon" style="background:#fef3c7;">🏠</div>
+      <div class="report-info">
+        <div class="report-name">साठवणूक पर्याय</div>
+        <div class="report-desc">कांदा चाळ, शीतगृह माहिती</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="report-card">
+      <div class="report-icon" style="background:var(--onion-50);">📊</div>
+      <div class="report-info">
+        <div class="report-name">जवळचे बाजार तुलना</div>
+        <div class="report-desc">इतर बाजारांचे भाव तपासा</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="report-card" onclick="navigateTo('screen-chatbot')">
+      <div class="report-icon" style="background:var(--green-50);">🤖</div>
+      <div class="report-info">
+        <div class="report-name">कांदा मित्रला विचारा</div>
+        <div class="report-desc">AI सल्ला — पुढील पावले</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="disclaimer">
+      <span class="disclaimer-icon">ℹ️</span>
+      <span>हे अॅप नुकसान भरपाई किंवा हमी भाव देत नाही. योग्य माहिती मिळवून निर्णय घ्या.</span>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 16 — HARVEST REPORT ===== -->
+  <div class="screen" id="screen-harvest">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-reports')">←</button>
+      <h2 class="header-title">🌾 माझा हंगाम अहवाल</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <div class="section text-center" style="padding-bottom:8px;">
+      <span style="font-size:48px;">🌾</span>
+      <h3 style="font-size:18px; font-weight:700; margin-top:4px;">रब्बी हंगाम 2026 — अहवाल</h3>
+      <p style="font-size:13px; color:var(--gray-500);">लागवड: 17 जुलै — काढणी: 25 ऑक्टोबर</p>
+    </div>
+
+    <div class="harvest-summary">
+      <div class="harvest-item">
+        <div class="harvest-value" style="color:var(--green-700);">110</div>
+        <div class="harvest-label">एकूण दिवस</div>
+      </div>
+      <div class="harvest-item">
+        <div class="harvest-value" style="color:var(--onion-400);">42 Q</div>
+        <div class="harvest-label">एकूण उत्पादन</div>
+      </div>
+      <div class="harvest-item">
+        <div class="harvest-value" style="color:var(--green-600);">6.4 cm</div>
+        <div class="harvest-label">सरासरी आकार</div>
+      </div>
+    </div>
+
+    <div class="spacer-16"></div>
+
+    <div class="quality-breakdown px-16">
+      <div class="quality-stat good">
+        <div class="quality-stat-value">82%</div>
+        <div class="quality-stat-label">Grade A</div>
+      </div>
+      <div class="quality-stat warning">
+        <div class="quality-stat-value">12%</div>
+        <div class="quality-stat-label">URS</div>
+      </div>
+      <div class="quality-stat danger">
+        <div class="quality-stat-value">4%</div>
+        <div class="quality-stat-label">खराब</div>
+      </div>
+      <div class="quality-stat accent">
+        <div class="quality-stat-value">चांगली</div>
+        <div class="quality-stat-label">साठवणूक गुणवत्ता</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="card">
+        <p style="font-weight:700; margin-bottom:8px;">📦 बाजार माहिती</p>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:13px; color:var(--gray-500);">विक्री बाजार</span>
+          <span style="font-size:13px; font-weight:600;">लासलगाव</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+          <span style="font-size:13px; color:var(--gray-500);">विक्री भाव</span>
+          <span style="font-size:13px; font-weight:600;">₹2,850 / क्विंटल</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" style="padding-top:0;">
+      <button class="btn btn-primary btn-block mb-8">
+        <span class="btn-icon">📑</span> PDF अहवाल तयार करा
+      </button>
+      <button class="btn btn-secondary btn-block" onclick="navigateTo('screen-feedback')">
+        <span class="btn-icon">📝</span> तुमचा अनुभव सांगा
+      </button>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 17 — FARMER FEEDBACK ===== -->
+  <div class="screen" id="screen-feedback">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-harvest')">←</button>
+      <h2 class="header-title">📝 तुमचा अनुभव</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <div class="section text-center">
+      <h3 style="font-size:18px; font-weight:700;">या हंगामातील तुमचा अनुभव कसा होता?</h3>
+      <p style="font-size:13px; color:var(--gray-500); margin-top:4px;">तुमचा अभिप्राय आम्हाला सुधारणा करण्यास मदत करेल</p>
+    </div>
+
+    <div class="feedback-emojis">
+      <div class="feedback-emoji active" onclick="selectFeedback(this)">
+        <span class="emoji">😊</span>
+        <span class="emoji-label">चांगला</span>
+      </div>
+      <div class="feedback-emoji" onclick="selectFeedback(this)">
+        <span class="emoji">😐</span>
+        <span class="emoji-label">ठीक</span>
+      </div>
+      <div class="feedback-emoji" onclick="selectFeedback(this)">
+        <span class="emoji">😞</span>
+        <span class="emoji-label">अडचणी आल्या</span>
+      </div>
+    </div>
+
+    <div class="section-title px-16"><span>❓</span> कोणत्या अडचणी आल्या?</div>
+    <div class="option-chips px-16">
+      <button class="option-chip" onclick="selectChip(this)">💧 पाणी</button>
+      <button class="option-chip" onclick="selectChip(this)">🦠 रोग</button>
+      <button class="option-chip" onclick="selectChip(this)">🐛 कीड</button>
+      <button class="option-chip" onclick="selectChip(this)">📏 आकार</button>
+      <button class="option-chip" onclick="selectChip(this)">⭐ गुणवत्ता</button>
+      <button class="option-chip" onclick="selectChip(this)">🏠 साठवणूक</button>
+      <button class="option-chip" onclick="selectChip(this)">💰 बाजार भाव</button>
+      <button class="option-chip" onclick="selectChip(this)">⛅ हवामान</button>
+    </div>
+
+    <div class="section">
+      <div class="form-group">
+        <label class="form-label">💬 अधिक सांगा (ऐच्छिक)</label>
+        <textarea class="form-input" rows="3" placeholder="तुमचा अनुभव लिहा किंवा बोला..." style="resize:none;"></textarea>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center; margin-bottom:16px;">
+        <button class="btn-voice" onclick="startVoice()" style="width:44px; height:44px;">🎙️</button>
+        <span style="font-size:13px; color:var(--gray-500);">बोलून सांगा</span>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="navigateTo('screen-next-season')">
+        <span class="btn-icon">✅</span> अभिप्राय पाठवा
+      </button>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 18 — NEXT SEASON PLAN ===== -->
+  <div class="screen" id="screen-next-season">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-reports')">←</button>
+      <h2 class="header-title">📋 पुढील हंगाम योजना</h2>
+      <button class="header-icon-btn tts-btn">🔊</button>
+    </div>
+
+    <div class="section" style="padding-bottom:8px;">
+      <div class="card card-onion text-center">
+        <span style="font-size:32px;">🌟</span>
+        <h3 style="font-size:16px; font-weight:700; margin-top:4px;">तुमच्या मागील हंगामावर आधारित</h3>
+        <p style="font-size:13px; color:var(--gray-600);">पुढील कांदा पीक योजना — AI ने तयार केली</p>
+      </div>
+    </div>
+
+    <!-- Previous Season Summary -->
+    <div class="section-title px-16"><span>📊</span> मागील हंगाम सारांश</div>
+    <div class="season-prev">
+      <div class="season-stat-row">
+        <span class="season-stat-key">Grade A</span>
+        <span class="season-stat-val">74%</span>
+      </div>
+      <div class="season-stat-row">
+        <span class="season-stat-key">सरासरी आकार</span>
+        <span class="season-stat-val">मध्यम</span>
+      </div>
+      <div class="season-stat-row">
+        <span class="season-stat-key">मुख्य समस्या</span>
+        <span class="season-stat-val">आकार विविधता</span>
+      </div>
+      <div class="season-stat-row">
+        <span class="season-stat-key">पाणी ताण</span>
+        <span class="season-stat-val">2 वेळा</span>
+      </div>
+      <div class="season-stat-row">
+        <span class="season-stat-key">रोग</span>
+        <span class="season-stat-val">1 नोंद</span>
+      </div>
+    </div>
+
+    <!-- New targets -->
+    <div class="section-title px-16"><span>🎯</span> पुढील हंगाम लक्ष्य</div>
+    <div class="section" style="padding-top:0;">
+      <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:10px;">
+        <div class="card card-green text-center">
+          <div style="font-size:20px;">🎯</div>
+          <div style="font-size:18px; font-weight:800; color:var(--green-700);">85%+</div>
+          <div style="font-size:11px; color:var(--gray-500);">लक्ष्य Grade A</div>
+        </div>
+        <div class="card card-green text-center">
+          <div style="font-size:20px;">📏</div>
+          <div style="font-size:18px; font-weight:800; color:var(--green-700);">मोठा</div>
+          <div style="font-size:11px; color:var(--gray-500);">लक्ष्य आकार</div>
+        </div>
+        <div class="card card-green text-center">
+          <div style="font-size:20px;">📸</div>
+          <div style="font-size:18px; font-weight:800; color:var(--green-700);">दर ३ दिवस</div>
+          <div style="font-size:11px; color:var(--gray-500);">तपासणी वारंवारता</div>
+        </div>
+        <div class="card card-green text-center">
+          <div style="font-size:20px;">⚠️</div>
+          <div style="font-size:18px; font-weight:800; color:var(--green-700);">5</div>
+          <div style="font-size:11px; color:var(--gray-500);">महत्त्वाचे चेकपॉइंट</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timeline Plan -->
+    <div class="section-title px-16"><span>📅</span> हंगाम तपासणी वेळापत्रक</div>
+    <div class="plan-timeline">
+      <div class="plan-item">
+        <div class="plan-day">D0</div>
+        <div class="plan-content">
+          <div class="plan-title">🌰 बियाणे निवड व लागवड</div>
+          <div class="plan-desc">दर्जेदार बियाणे निवडा. मातीची तपासणी करा.</div>
+        </div>
+      </div>
+      <div class="plan-item">
+        <div class="plan-day">D15</div>
+        <div class="plan-content">
+          <div class="plan-title">📸 पहिला फोटो चेक</div>
+          <div class="plan-desc">रोपांची वाढ तपासा. पहिला AI स्कॅन करा.</div>
+        </div>
+      </div>
+      <div class="plan-item">
+        <div class="plan-day">D30</div>
+        <div class="plan-content">
+          <div class="plan-title">🧪 खत वापरणी + तपासणी</div>
+          <div class="plan-desc">⚠️ मागील वेळचा पाणी ताण टाळण्यासाठी सिंचन शेड्यूल कडक ठेवा.</div>
+        </div>
+      </div>
+      <div class="plan-item">
+        <div class="plan-day">D45</div>
+        <div class="plan-content">
+          <div class="plan-title">🐛 कीड/रोग तपासणी</div>
+          <div class="plan-desc">मागील वेळी रोग दिसला होता. या वेळी लवकर तपासा.</div>
+        </div>
+      </div>
+      <div class="plan-item">
+        <div class="plan-day">D60</div>
+        <div class="plan-content">
+          <div class="plan-title">🧅 कांदा सुरूवात — गुणवत्ता चेक</div>
+          <div class="plan-desc">⚠️ महत्त्वाचा टप्पा — आकार विविधता कमी करण्यासाठी एकसमान पाणी द्या.</div>
+        </div>
+      </div>
+      <div class="plan-item">
+        <div class="plan-day">D75</div>
+        <div class="plan-content">
+          <div class="plan-title">📏 आकार तपासणी</div>
+          <div class="plan-desc">कांदा आकार लक्ष्यानुसार आहे का तपासा. AI स्कॅन करा.</div>
+        </div>
+      </div>
+      <div class="plan-item">
+        <div class="plan-day">D90</div>
+        <div class="plan-content">
+          <div class="plan-title">🟡 परिपक्वता तपासणी</div>
+          <div class="plan-desc">पाने पिवळी झाल्यास काढणीची तयारी करा.</div>
+        </div>
+      </div>
+      <div class="plan-item">
+        <div class="plan-day" style="background:var(--onion-100); color:var(--onion-500);">🌾</div>
+        <div class="plan-content">
+          <div class="plan-title">🌾 काढणी + अंतिम गुणवत्ता</div>
+          <div class="plan-desc">काढणी करा. अंतिम गुणवत्ता अहवाल तयार करा.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <button class="btn btn-primary btn-block mb-8">
+        <span class="btn-icon">📅</span> ही योजना लागू करा
+      </button>
+      <button class="btn btn-secondary btn-block">
+        <span class="btn-icon">📑</span> PDF डाउनलोड करा
+      </button>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 19 — REMINDERS ===== -->
+  <div class="screen" id="screen-reminders">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-home')">←</button>
+      <h2 class="header-title">🔔 सूचना / रिमाइंडर्स</h2>
+    </div>
+
+    <div class="section-title px-16" style="margin-top:12px;"><span>📅</span> आजच्या सूचना</div>
+    
+    <div class="reminder-card">
+      <span class="reminder-icon">📸</span>
+      <span class="reminder-text">आज पिकाचा फोटो तपासा</span>
+      <span class="reminder-time" style="color:var(--onion-400); font-weight:600;">आता</span>
+    </div>
+    <div class="reminder-card">
+      <span class="reminder-icon">💧</span>
+      <span class="reminder-text">सिंचनाची स्थिती तपासा</span>
+      <span class="reminder-time">संध्या. ५:००</span>
+    </div>
+    <div class="reminder-card">
+      <span class="reminder-icon">🌱</span>
+      <span class="reminder-text">तुमचे पीक आता Bulb Development मध्ये आहे</span>
+      <span class="reminder-time">सकाळी</span>
+    </div>
+
+    <div class="section-title px-16" style="margin-top:16px;"><span>⚠️</span> अलर्ट</div>
+    
+    <div class="alert-card warning">
+      <span class="alert-icon">⚠️</span>
+      <div class="alert-content">
+        <div class="alert-title">गुणवत्ता सूचना</div>
+        <div class="alert-desc">तुमच्या परिसरात quality concern reports वाढल्या आहेत</div>
+      </div>
+    </div>
+
+    <div class="section-title px-16" style="margin-top:16px;"><span>📊</span> आगामी</div>
+    
+    <div class="reminder-card">
+      <span class="reminder-icon">📊</span>
+      <span class="reminder-text">पुढील गुणवत्ता तपासणी ३ दिवसांनी</span>
+      <span class="reminder-time">३ दिवस</span>
+    </div>
+    <div class="reminder-card">
+      <span class="reminder-icon">🧪</span>
+      <span class="reminder-text">खत वापरणी — पोटॅश</span>
+      <span class="reminder-time">५ दिवस</span>
+    </div>
+    <div class="reminder-card">
+      <span class="reminder-icon">🌡️</span>
+      <span class="reminder-text">हवामान बदल अंदाज — पावसाची शक्यता</span>
+      <span class="reminder-time">७ दिवस</span>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== SCREEN 20 — REPORTS ===== -->
+  <div class="screen" id="screen-reports">
+    <div class="app-header">
+      <button class="header-back" onclick="navigateTo('screen-home')">←</button>
+      <h2 class="header-title">📊 माझे अहवाल</h2>
+    </div>
+
+    <div class="section" style="padding-bottom:8px;">
+      <p style="font-size:14px; color:var(--gray-500);">तुमचे सर्व अहवाल एका ठिकाणी</p>
+    </div>
+
+    <div class="report-card" onclick="navigateTo('screen-lifecycle')">
+      <div class="report-icon" style="background:var(--green-100);">🌱</div>
+      <div class="report-info">
+        <div class="report-name">पीक जीवनचक्र अहवाल</div>
+        <div class="report-desc">सर्व टप्पे, निरीक्षणे, कार्ये</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="report-card" onclick="navigateTo('screen-crop-analysis')">
+      <div class="report-icon" style="background:#e0f2fe;">🔬</div>
+      <div class="report-info">
+        <div class="report-name">AI पीक आरोग्य अहवाल</div>
+        <div class="report-desc">फोटो विश्लेषण, आरोग्य स्कोर</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="report-card" onclick="navigateTo('screen-quality-result')">
+      <div class="report-icon" style="background:var(--onion-100);">🧅</div>
+      <div class="report-info">
+        <div class="report-name">कांदा गुणवत्ता अहवाल</div>
+        <div class="report-desc">Grade A, आकार, एकसमानता</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="report-card" onclick="navigateTo('screen-harvest')">
+      <div class="report-icon" style="background:#fef3c7;">🌾</div>
+      <div class="report-info">
+        <div class="report-name">हंगाम अहवाल</div>
+        <div class="report-desc">उत्पादन, गुणवत्ता, बाजार</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="report-card" onclick="navigateTo('screen-map')">
+      <div class="report-icon" style="background:var(--green-50);">🗺️</div>
+      <div class="report-info">
+        <div class="report-name">प्रादेशिक तुलना</div>
+        <div class="report-desc">तुमचे शेत vs जिल्हा सरासरी</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="report-card" onclick="navigateTo('screen-next-season')">
+      <div class="report-icon" style="background:var(--onion-50);">📋</div>
+      <div class="report-info">
+        <div class="report-name">पुढील हंगाम योजना</div>
+        <div class="report-desc">AI वैयक्तिकृत योजना</div>
+      </div>
+      <span class="report-arrow">→</span>
+    </div>
+
+    <div class="section">
+      <button class="btn btn-secondary btn-block">
+        <span class="btn-icon">📥</span> सर्व अहवाल PDF डाउनलोड करा
+      </button>
+    </div>
+    <div class="spacer-32"></div>
+  </div>
+
+  <!-- ===== BOTTOM NAVIGATION ===== -->
+  <nav class="bottom-nav" id="bottom-nav" style="display:none;">
+    <button class="nav-item active" onclick="navTo('screen-home')" data-screen="screen-home">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">होम</span>
+    </button>
+    <button class="nav-item" onclick="navTo('screen-lifecycle')" data-screen="screen-lifecycle">
+      <span class="nav-icon">🌱</span>
+      <span class="nav-label">पीक</span>
+    </button>
+    <button class="nav-item" onclick="navTo('screen-quality-scan')" data-screen="screen-quality-scan">
+      <span class="nav-icon">📸</span>
+      <span class="nav-label">तपासा</span>
+    </button>
+    <button class="nav-item" onclick="navTo('screen-chatbot')" data-screen="screen-chatbot">
+      <span class="nav-icon">🤖</span>
+      <span class="nav-label">मित्र</span>
+    </button>
+    <button class="nav-item" onclick="navTo('screen-market')" data-screen="screen-market">
+      <span class="nav-icon">💰</span>
+      <span class="nav-label">बाजार</span>
+    </button>
+  </nav>
+
+</div>
+
+<!-- ===== JOURNEY VISUALIZATION — Floating button ===== -->
+<div id="journey-fab" style="display:none; position:fixed; bottom:80px; right:20px; z-index:999;">
+  <button class="btn btn-accent" style="border-radius:50%; width:56px; height:56px; padding:0; font-size:24px; box-shadow:0 4px 20px rgba(194,24,91,0.4);" onclick="showJourney()">
+    🗺️
+  </button>
+</div>
+
+<!-- Journey Modal -->
+<div class="modal-overlay" id="journey-modal">
+  <div class="modal-content">
+    <div class="modal-handle"></div>
+    <h3 style="font-size:18px; font-weight:700; text-align:center; margin-bottom:4px;">🧅 कांद्याचा डिजिटल प्रवास</h3>
+    <p style="font-size:13px; color:var(--gray-500); text-align:center; margin-bottom:16px;">
+      फक्त कांदा तपासणारे अॅप नाही — पेरणीपासून बाजारापर्यंत संपूर्ण प्रवास
+    </p>
+    
+    <div class="plan-timeline">
+      <div class="plan-item"><div class="plan-day" style="background:var(--green-100); font-size:16px;">🌱</div><div class="plan-content"><div class="plan-title">CROP — पीक सुरूवात</div></div></div>
+      <div class="plan-item"><div class="plan-day" style="background:#e0f2fe; font-size:16px;">🔍</div><div class="plan-content"><div class="plan-title">MONITOR — नियमित तपासणी</div></div></div>
+      <div class="plan-item"><div class="plan-day" style="background:var(--onion-100); font-size:16px;">🤖</div><div class="plan-content"><div class="plan-title">AI ANALYSE — AI विश्लेषण</div></div></div>
+      <div class="plan-item"><div class="plan-day" style="background:#fef3c7; font-size:16px;">📈</div><div class="plan-content"><div class="plan-title">IMPROVE — सुधारणा</div></div></div>
+      <div class="plan-item"><div class="plan-day" style="background:var(--green-100); font-size:16px;">🧅</div><div class="plan-content"><div class="plan-title">QUALITY CHECK — गुणवत्ता तपासणी</div></div></div>
+      <div class="plan-item"><div class="plan-day" style="background:#e0f2fe; font-size:16px;">🗺️</div><div class="plan-content"><div class="plan-title">REGIONAL MAP — प्रादेशिक नकाशा</div></div></div>
+      <div class="plan-item"><div class="plan-day" style="background:#fef3c7; font-size:16px;">💰</div><div class="plan-content"><div class="plan-title">MARKET — बाजार जागरूकता</div></div></div>
+      <div class="plan-item"><div class="plan-day" style="background:var(--green-100); font-size:16px;">🏛️</div><div class="plan-content"><div class="plan-title">SUPPORT — सरकारी मदत</div></div></div>
+      <div class="plan-item"><div class="plan-day" style="background:var(--onion-100); font-size:16px;">🌾</div><div class="plan-content"><div class="plan-title">HARVEST — काढणी अहवाल</div></div></div>
+      <div class="plan-item"><div class="plan-day" style="background:#e0f2fe; font-size:16px;">📝</div><div class="plan-content"><div class="plan-title">FEEDBACK — शेतकरी अभिप्राय</div></div></div>
+      <div class="plan-item"><div class="plan-day" style="background:var(--green-100); font-size:16px;">🌟</div><div class="plan-content"><div class="plan-title">NEXT SEASON — वैयक्तिक योजना</div></div></div>
+    </div>
+
+    <button class="btn btn-primary btn-block mt-16" onclick="closeJourney()">समजले ✅</button>
+  </div>
+</div>
+
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
