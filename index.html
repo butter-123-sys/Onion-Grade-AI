@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="ONIONGRADE AI — AI-Based Onion Quality Assessment, Grading & Crop Intelligence Platform">
+  <meta name="theme-color" content="#1a6b3c">
+  <title>ONIONGRADE AI — AI-Based Onion Quality Assessment & Grading</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🧅</text></svg>">
+  <link rel="stylesheet" href="styles.css?v=4">
+</head>
+<body class="no-sidebar" data-role="none">
+
+<!-- ===== CONTROL BAR: Language + Role ===== -->
+<div id="control-bar" class="control-bar">
+  <div class="cb-group lang-group">
+    <span class="cb-label" data-i18n="cb_lang">🌐 Language:</span>
+    <button class="lang-pill active" data-lang="en" onclick="setLang('en')">English</button>
+    <button class="lang-pill" data-lang="mr" onclick="setLang('mr')">मराठी</button>
+    <button class="lang-pill" data-lang="hi" onclick="setLang('hi')">हिन्दी</button>
+  </div>
+  <div class="cb-group role-group" id="control-role-group">
+    <button class="role-pill" id="rpill-farmer" onclick="switchRole('farmer')">👨‍🌾 <span data-i18n="role_farmer">शेतकरी</span></button>
+    <button class="role-pill" id="rpill-procurement" onclick="switchRole('procurement')">📋 <span data-i18n="role_procurement">अधिकारी</span></button>
+    <button class="role-pill" id="rpill-government" onclick="switchRole('government')">🏛️ <span data-i18n="role_government">शासन</span></button>
+    <button class="role-pill pill-logout" onclick="logoutToWelcome()" title="भूमिका बदला / Logout">🚪 <span data-i18n="btn_switch_role">भूमिका बदला</span></button>
+  </div>
+</div>
+
+<!-- ===== APP SHELL ===== -->
+<div class="app-shell">
+
+  <!-- SIDEBAR (visible on desktop/laptop, collapsible on tablet, hidden on mobile) -->
+  <nav class="sidebar" id="sidebar">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar">☰</button>
+    <div class="sidebar-brand">
+      <span class="sb-logo">🧅</span>
+      <div class="sb-text"><h3>ONIONGRADE AI</h3><small>Quality & Digital Grading</small></div>
+    </div>
+    
+    <!-- Active Role Header Card -->
+    <div class="sidebar-user-card" id="sidebar-user-card">
+      <div class="suc-avatar" id="suc-avatar">👨‍🌾</div>
+      <div class="suc-info">
+        <div class="suc-name" id="suc-name" data-i18n="suc_farmer_title">Farmer Dashboard</div>
+        <div class="suc-role-badge" id="suc-badge" data-i18n="suc_farmer_badge">Farmer Account</div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav" id="sidebar-nav">
+      <!-- ===== DASHBOARD 1: FARMER (No Map) ===== -->
+      <div class="dashboard-section" id="dsec-farmer" data-role-section="farmer">
+        <div class="sn-section-header">
+          <span class="sn-section-badge" data-i18n="sn_farmer_hdr">👨‍🌾 Farmer Dashboard</span>
+        </div>
+        <div class="sn-item active" data-screen="screen-farmer-home" onclick="goTo('screen-farmer-home');closeSidebar()"><span class="sn-icon">🏠</span><span class="sn-label" data-i18n="nav_home">डॅशबोर्ड होम</span></div>
+        <div class="sn-item" data-screen="screen-tray-guide" onclick="goTo('screen-tray-guide');closeSidebar()"><span class="sn-icon">🧅</span><span class="sn-label" data-i18n="nav_quality">गुणवत्ता तपासणी</span></div>
+        <div class="sn-item" data-screen="screen-market" onclick="goTo('screen-market');closeSidebar()"><span class="sn-icon">💰</span><span class="sn-label" data-i18n="svc_market">बाजार माहिती व भाव</span></div>
+        <div class="sn-item" data-screen="screen-gov-schemes" onclick="goTo('screen-gov-schemes');closeSidebar()"><span class="sn-icon">🏛️</span><span class="sn-label" data-i18n="svc_gov_support">शासन योजना व आधार</span></div>
+        <div class="sn-item" data-screen="screen-farmer-lifecycle" onclick="goTo('screen-farmer-lifecycle');closeSidebar()"><span class="sn-icon">🌱</span><span class="sn-label" data-i18n="nav_lifecycle">पीक जीवनचक्र</span></div>
+        <div class="sn-item" data-screen="screen-chatbot" onclick="goTo('screen-chatbot');closeSidebar()"><span class="sn-icon">🤖</span><span class="sn-label" data-i18n="sn_chatbot">Onion Mitra AI</span></div>
+        <div class="sn-item" data-screen="screen-reports" onclick="goTo('screen-reports');closeSidebar()"><span class="sn-icon">📊</span><span class="sn-label" data-i18n="svc_reports">माझे अहवाल</span></div>
+        <div class="sn-item" data-screen="screen-next-season" onclick="goTo('screen-next-season');closeSidebar()"><span class="sn-icon">🔮</span><span class="sn-label" data-i18n="sn_next_season">Next Season Advisory</span></div>
+      </div>
+
+      <!-- ===== DASHBOARD 2: PROCUREMENT (With Mandi Map) ===== -->
+      <div class="dashboard-section" id="dsec-procurement" data-role-section="procurement">
+        <div class="sn-section-header">
+          <span class="sn-section-badge proc-badge-hdr" data-i18n="sn_proc_hdr">📋 Procurement Officer Dashboard</span>
+        </div>
+        <div class="sn-item" data-screen="screen-proc-dashboard" onclick="goTo('screen-proc-dashboard');closeSidebar()"><span class="sn-icon">📊</span><span class="sn-label" data-i18n="sn_proc_dash">Officer Dashboard</span></div>
+        <div class="sn-item" data-screen="screen-proc-map" onclick="goTo('screen-proc-map');closeSidebar()"><span class="sn-icon">🗺️</span><span class="sn-label" data-i18n="sn_proc_map">खरेदी व मंडी नकाशा</span></div>
+        <div class="sn-item" data-screen="screen-proc-create-lot" onclick="goTo('screen-proc-create-lot');closeSidebar()"><span class="sn-icon">📝</span><span class="sn-label" data-i18n="sn_proc_create_lot">Create New Lot</span></div>
+        <div class="sn-item" data-screen="screen-proc-tray-scan" onclick="goTo('screen-proc-tray-scan');closeSidebar()"><span class="sn-icon">📦</span><span class="sn-label" data-i18n="sn_proc_tray_scan">Batch Tray Scan</span></div>
+        <div class="sn-item" data-screen="screen-proc-review" onclick="goTo('screen-proc-review');closeSidebar()"><span class="sn-icon">⚖️</span><span class="sn-label" data-i18n="sn_proc_review">Human Review</span></div>
+        <div class="sn-item" data-screen="screen-proc-history" onclick="goTo('screen-proc-history');closeSidebar()"><span class="sn-icon">📋</span><span class="sn-label" data-i18n="sn_proc_history">Lot History</span></div>
+      </div>
+
+      <!-- ===== DASHBOARD 3: GOVERNMENT (With State Map) ===== -->
+      <div class="dashboard-section" id="dsec-government" data-role-section="government">
+        <div class="sn-section-header">
+          <span class="sn-section-badge gov-badge-hdr" data-i18n="sn_gov_hdr">🏛️ State Government Dashboard</span>
+        </div>
+        <div class="sn-item" data-screen="screen-gov-dashboard" onclick="goTo('screen-gov-dashboard');closeSidebar()"><span class="sn-icon">🏛️</span><span class="sn-label" data-i18n="sn_gov_dash">State Dashboard</span></div>
+        <div class="sn-item" data-screen="screen-gov-map" onclick="goTo('screen-gov-map');closeSidebar()"><span class="sn-icon">🗺️</span><span class="sn-label" data-i18n="sn_gov_map">राज्य गुणवत्ता नकाशा</span></div>
+        <div class="sn-item" data-screen="screen-gov-analytics" onclick="goTo('screen-gov-analytics');closeSidebar()"><span class="sn-icon">📈</span><span class="sn-label" data-i18n="sn_gov_analytics">District Analytics</span></div>
+        <div class="sn-item" data-screen="screen-gov-reports" onclick="goTo('screen-gov-reports');closeSidebar()"><span class="sn-icon">📑</span><span class="sn-label" data-i18n="sn_gov_reports">Government Reports</span></div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <button class="btn-sidebar-logout" onclick="logoutToWelcome()" title="भूमिका बदला / Log out">
+        <span>🚪</span> <span data-i18n="btn_switch_role">भूमिका बदला / लॉगआउट</span>
+      </button>
+      <div class="sb-version">⚡ ONIONGRADE AI v2.4</div>
+    </div>
+  </nav>
+
+  <!-- SIDEBAR OVERLAY (tablet) -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content" id="main-content">
+
+  <!-- ==================== WELCOME / LOGIN ==================== -->
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-screen">
+      <div class="welcome-bg-gradient"></div>
+      <!-- Top visual band with image -->
+      <div class="welcome-hero-band">
+        <img src="assets/onion_field_bg.jpg" alt="Onion field" class="hero-band-img" onerror="this.style.display='none'">
+        <div class="hero-band-overlay"></div>
+        <div class="hero-band-content">
+          <div class="welcome-logo-row">
+            <span class="welcome-logo">🧅</span>
+            <div>
+              <h1 class="welcome-title">ONIONGRADE AI</h1>
+              <p class="welcome-subtitle-en">AI-Based Onion Quality Assessment & Grading</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="welcome-content">
+        <div class="welcome-hero-container">
+          <!-- Left: Information, features and role cards -->
+          <div class="welcome-hero-main">
+            <div class="welcome-badge-pill">
+              <span class="badge-dot-live"></span>
+              <span data-i18n="welcome_badge_text">AI Revolution for Onion Growers of Maharashtra</span>
+            </div>
+            <p class="welcome-tagline" data-i18n="welcome_tagline">ट्रेतील कांद्यापासून पारदर्शक गुणवत्ता तपासणी, आणि मागील अनुभवातून पुढील हंगामाचे स्मार्ट मार्गदर्शन.</p>
+
+            <!-- Feature highlights -->
+            <div class="welcome-features">
+              <div class="wf-item"><span>📷</span><span data-i18n="wf1">नियंत्रित ट्रे इमेजिंग</span></div>
+              <div class="wf-item"><span>🤖</span><span data-i18n="wf2">AI गुणवत्ता विश्लेषण</span></div>
+              <div class="wf-item"><span>📊</span><span data-i18n="wf3">पारदर्शक ग्रेडिंग</span></div>
+              <div class="wf-item"><span>🗺️</span><span data-i18n="wf4">प्रादेशिक बुद्धिमत्ता</span></div>
+            </div>
+
+            <h3 class="welcome-role-title" data-i18n="select_role">भूमिका निवडा / Select Your Role</h3>
+            <div class="role-cards">
+              <button class="role-card" onclick="selectRole('farmer')">
+                <span class="role-icon">👨‍🌾</span>
+                <span class="role-name" data-i18n="role_farmer">शेतकरी</span>
+                <span class="role-desc" data-i18n="role_farmer_desc">कांदा गुणवत्ता तपासणी</span>
+              </button>
+              <button class="role-card" onclick="selectRole('procurement')">
+                <span class="role-icon">📋</span>
+                <span class="role-name" data-i18n="role_procurement">खरेदी अधिकारी</span>
+                <span class="role-desc" data-i18n="role_procurement_desc">लॉट ग्रेडिंग व तपासणी</span>
+              </button>
+              <button class="role-card" onclick="selectRole('government')">
+                <span class="role-icon">🏛️</span>
+                <span class="role-name" data-i18n="role_government">शासन अधिकारी</span>
+                <span class="role-desc" data-i18n="role_government_desc">प्रादेशिक गुणवत्ता विश्लेषण</span>
+              </button>
+            </div>
+
+            <!-- Quick demo -->
+            <div class="welcome-actions-row">
+              <button class="btn btn-demo-glow" onclick="quickDemo()">
+                <span>⚡</span> <span data-i18n="btn_quick_demo">थेट डेमो सुरू करा (1-Click)</span>
+              </button>
+              <div class="welcome-demo-badge">
+                <span>⚡</span> <span data-i18n="demo_badge">DEMO MODE — सर्व डेटा प्रात्यक्षिक आहे</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Farmer Front Image Showcase Card -->
+          <div class="welcome-farmer-showcase">
+            <div class="farmer-hero-card" onclick="selectRole('farmer')">
+              <div class="farmer-img-container">
+                <img src="assets/farmer_hero.jpg" alt="Indian onion farmer with fresh harvest" class="farmer-front-portrait" onerror="this.parentElement.style.display='none'">
+                <div class="farmer-vignette"></div>
+                <div class="farmer-floating-tag">
+                  <span class="tag-pulse"></span>
+                  <span data-i18n="farmer_platform_tag">AI-Powered Farmer Platform</span>
+                </div>
+                <div class="farmer-overlay-info">
+                  <div class="foi-badge">
+                    <span class="foi-icon">🧅</span>
+                    <div>
+                      <div class="foi-title" data-i18n="foi_title">Onion Producing Farmer</div>
+                      <div class="foi-sub" data-i18n="foi_sub">Transparent Grading • Fair Price • Instant Reports</div>
+                    </div>
+                  </div>
+                  <div class="farmer-cta-hint">
+                    <span data-i18n="farmer_cta_hint">Continue as Farmer</span>
+                    <span class="cta-arrow">→</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== FARMER: REGISTRATION ==================== -->
+  <div class="screen" id="screen-farmer-register">
+    <div class="app-header">
+      <button class="hdr-back" onclick="goTo('screen-welcome')">←</button>
+      <h2 class="hdr-title" data-i18n="reg_title">शेतकरी नोंदणी</h2>
+      <button class="hdr-icon tts-btn" onclick="speak('reg_title')">🔊</button>
+    </div>
+    <div class="page-body">
+      <div class="card card-accent mb-16 text-center">
+        <span class="big-icon">🧅</span>
+        <p class="card-heading" data-i18n="reg_heading">साधी नोंदणी करा आणि कांदा गुणवत्ता तपासा</p>
+        <p class="card-sub" data-i18n="reg_sub">फक्त मूलभूत माहिती आवश्यक आहे</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">👤 <span data-i18n="lbl_name">शेतकरी नाव</span></label>
+        <input type="text" class="form-input" id="f-name" data-placeholder-i18n="ph_name" placeholder="तुमचे नाव लिहा">
+      </div>
+      <div class="form-group">
+        <label class="form-label">🏘️ <span data-i18n="lbl_village">गाव</span></label>
+        <input type="text" class="form-input" id="f-village" data-placeholder-i18n="ph_village" placeholder="तुमच्या गावाचे नाव">
+      </div>
+      <div class="form-group">
+        <label class="form-label">📍 <span data-i18n="lbl_district">जिल्हा</span></label>
+        <select class="form-select" id="f-district">
+          <option value="" data-i18n="ph_district">जिल्हा निवडा</option>
+          <option>नाशिक / Nashik</option><option>अहमदनगर / Ahmednagar</option><option>पुणे / Pune</option>
+          <option>सोलापूर / Solapur</option><option>धुळे / Dhule</option><option>जळगाव / Jalgaon</option>
+          <option>छत्रपती संभाजीनगर</option><option>उस्मानाबाद</option><option>सातारा / Satara</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📱 <span data-i18n="lbl_mobile">मोबाइल नंबर</span></label>
+        <input type="tel" class="form-input" id="f-mobile" placeholder="9876543210">
+      </div>
+      <div class="form-group">
+        <label class="form-label">🧅 <span data-i18n="lbl_variety">कांद्याचा प्रकार</span> <small data-i18n="lbl_optional">(ऐच्छिक)</small></label>
+        <div class="chip-group">
+          <button class="chip active" onclick="selectChip(this)">लाल कांदा</button>
+          <button class="chip" onclick="selectChip(this)">पांढरा कांदा</button>
+          <button class="chip" onclick="selectChip(this)">उन्हाळी</button>
+          <button class="chip" onclick="selectChip(this)">खरीप</button>
+          <button class="chip" onclick="selectChip(this)">रांगडा</button>
+        </div>
+      </div>
+      <div class="disclaimer-box">
+        <span>ℹ️</span>
+        <span data-i18n="reg_disclaimer">अधिक माहिती नंतर भरता येईल. आत्ता फक्त नाव आणि गाव पुरेसे.</span>
+      </div>
+      <button class="btn btn-primary btn-lg btn-block mt-16" onclick="completeRegistration()">
+        <span>✅</span> <span data-i18n="btn_register">नोंदणी पूर्ण करा</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== FARMER: HOME (QUALITY FIRST) ==================== -->
+  <div class="screen" id="screen-farmer-home">
+    <div class="app-header">
+      <button class="mobile-menu-btn" onclick="toggleSidebar()" title="Menu">☰</button>
+      <div class="hdr-brand"><span class="hdr-logo">🧅</span><div><h2 class="hdr-title" style="font-size:15px;">ONIONGRADE AI</h2><span class="hdr-badge" data-i18n="quality_first_badge">AI QUALITY ASSESSMENT</span></div></div>
+      <div class="hdr-right"><button class="hdr-icon" onclick="goTo('screen-notifications')">🔔<span class="notif-dot"></span></button><button class="hdr-icon" onclick="goTo('screen-farmer-profile')">👤</button></div>
+    </div>
+    <div class="page-body">
+      <div class="greeting-row">
+        <div><p class="greeting-hello" data-i18n="greeting">🙏 नमस्कार, <span id="farmer-display-name">शेतकरी</span>!</p><p class="greeting-sub" data-i18n="greeting_sub">आज कांदा गुणवत्ता तपासायची आहे?</p></div>
+      </div>
+      <!-- PRIMARY CTA -->
+      <div class="quality-hero-card" onclick="goTo('screen-tray-guide')">
+        <div class="qhc-icon">🧅</div>
+        <h3 class="qhc-title" data-i18n="cta_quality">कांदा गुणवत्ता तपासा</h3>
+        <p class="qhc-desc" data-i18n="cta_quality_desc">ट्रेमध्ये कांदे ठेवा आणि फोटो घ्या. AI प्रत्येक कांद्याचे विश्लेषण करेल.</p>
+        <button class="btn btn-primary btn-lg"><span>📷</span> <span data-i18n="btn_start_check">गुणवत्ता तपासणी सुरू करा</span></button>
+      </div>
+      <!-- Secondary -->
+      <h4 class="section-label" data-i18n="other_services">इतर सेवा</h4>
+      <div class="services-grid">
+        <button class="service-card" onclick="goTo('screen-tray-guide')"><span class="sc-icon">🧅</span><span class="sc-name" data-i18n="nav_quality">गुणवत्ता तपासणी</span></button>
+        <button class="service-card" onclick="goTo('screen-market')"><span class="sc-icon">💰</span><span class="sc-name" data-i18n="svc_market">बाजार माहिती</span></button>
+        <button class="service-card" onclick="goTo('screen-gov-schemes')"><span class="sc-icon">🏛️</span><span class="sc-name" data-i18n="svc_gov_support">शासन योजना</span></button>
+        <button class="service-card" onclick="goTo('screen-farmer-lifecycle')"><span class="sc-icon">🌱</span><span class="sc-name" data-i18n="svc_lifecycle">पीक जीवनचक्र</span></button>
+        <button class="service-card" onclick="goTo('screen-chatbot')"><span class="sc-icon">🤖</span><span class="sc-name">कांदा मित्र</span></button>
+        <button class="service-card" onclick="goTo('screen-reports')"><span class="sc-icon">📊</span><span class="sc-name" data-i18n="svc_reports">अहवाल</span></button>
+      </div>
+      <!-- Recent -->
+      <h4 class="section-label" data-i18n="recent_check">अलीकडील गुणवत्ता तपासणी</h4>
+      <div class="card card-outlined" onclick="goTo('screen-quality-result')">
+        <div class="recent-lot-row"><div><p class="rl-id">LOT ON-2026-00421</p><p class="rl-date">02 Oct 2026 · <span data-i18n="lbl_nashik">नाशिक</span></p></div><div class="rl-grade grade-a">GRADE A</div></div>
+        <div class="rl-stats"><span>🧅 50 <span data-i18n="onions">कांदे</span></span><span>✅ 82% <span data-i18n="healthy">चांगले</span></span><span>📏 68mm</span><span>🤖 94%</span></div>
+      </div>
+
+      <!-- PERSONALIZED LIFECYCLE CARD (shown after activation) -->
+      <div class="lifecycle-summary-card" id="home-lifecycle-card" style="display:none;" onclick="goTo('screen-farmer-lifecycle')">
+        <div class="lsc-header">
+          <div class="lsc-icon-wrap"><span class="lsc-icon">🌱</span></div>
+          <div class="lsc-header-text">
+            <h4 data-i18n="lsc_title">वैयक्तिक पीक जीवनचक्र</h4>
+            <span class="lsc-badge" data-i18n="lsc_activated">✓ सक्रिय</span>
+          </div>
+        </div>
+        <p class="lsc-desc" data-i18n="lsc_desc">तुमच्या मागील गुणवत्ता निकाल आणि हंगाम अभिप्रायावर आधारित.</p>
+        <div class="lsc-details">
+          <div class="lsc-detail-row">
+            <span class="lsc-detail-label" data-i18n="lsc_target_label">लक्ष्य:</span>
+            <span class="lsc-detail-val" data-i18n="lsc_target_val">Preferred / मोठा आकार</span>
+          </div>
+          <div class="lsc-detail-row">
+            <span class="lsc-detail-label" data-i18n="lsc_current_label">सध्याचा टप्पा:</span>
+            <span class="lsc-detail-val lsc-stage-active" data-i18n="lsc_current_val">🧅 कांदा वाढ (Bulb Development)</span>
+          </div>
+          <div class="lsc-detail-row">
+            <span class="lsc-detail-label" data-i18n="lsc_day_label">दिवस:</span>
+            <span class="lsc-detail-val">68 / 130</span>
+          </div>
+        </div>
+        <div class="lsc-progress">
+          <div class="lsc-progress-bar"><div class="lsc-progress-fill" style="width:52%"></div></div>
+          <span class="lsc-progress-text">52%</span>
+        </div>
+        <button class="btn btn-primary btn-sm lsc-btn">
+          📋 <span data-i18n="lsc_view_today">आजचे मार्गदर्शन पहा</span>
+        </button>
+      </div>
+
+    </div>
+    <nav class="bottom-nav" id="farmer-nav">
+      <button class="bnav-btn active" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button>
+      <button class="bnav-btn" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button>
+      <button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button>
+      <button class="bnav-btn" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button>
+      <button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button>
+    </nav>
+  </div>
+
+  <!-- ==================== TRAY GUIDE ==================== -->
+  <div class="screen" id="screen-tray-guide">
+    <div class="app-header">
+      <button class="hdr-back" onclick="goBack()">←</button>
+      <h2 class="hdr-title" data-i18n="tray_guide_title">ट्रे मार्गदर्शन</h2>
+      <button class="hdr-icon tts-btn" onclick="speak('tray_guide_title')">🔊</button>
+    </div>
+    <div class="page-body text-center">
+      <div class="tray-guide-steps">
+        <div class="tg-step"><div class="tg-step-num">1</div><div class="tg-step-icon">🧅</div><p class="tg-step-text" data-i18n="tray_step1">ट्रेमध्ये कांदे ठेवा. कांदे एकमेकांना स्पर्श करू शकतात.</p></div>
+        <div class="tg-step"><div class="tg-step-num">2</div><div class="tg-step-icon">📷</div><p class="tg-step-text" data-i18n="tray_step2">कॅमेरा स्थिर ठेवा. पुरेसा प्रकाश असू द्या.</p></div>
+        <div class="tg-step"><div class="tg-step-num">3</div><div class="tg-step-icon">✅</div><p class="tg-step-text" data-i18n="tray_step3">फोटो घ्या. AI विश्लेषण सुरू होईल.</p></div>
+      </div>
+      <!-- BIG tray illustration with MANY onions -->
+      <div class="tray-illustration-big">
+        <div class="tray-box-big">
+          <div class="tray-label" data-i18n="controlled_tray">नियंत्रित ट्रे / CONTROLLED TRAY</div>
+          <div class="tray-onions-big">
+            <span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span>
+            <span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span>
+            <span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span>
+            <span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span>
+            <span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span>
+            <span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span>
+            <span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span>
+            <span>🧅</span><span>🧅</span>
+          </div>
+          <p class="tray-count-info" data-i18n="tray_count_info">~50 कांदे ट्रेमध्ये ठेवता येतात. कांदे एकमेकांना लागू शकतात.</p>
+        </div>
+      </div>
+      <!-- Warning: only tray images accepted -->
+      <div class="card card-warning mt-16">
+        <h4 class="card-heading">⚠️ <span data-i18n="tray_warning_title">फक्त ट्रे फोटो स्वीकारले जातात</span></h4>
+        <p class="card-sub" data-i18n="tray_warning_desc">इतर कोणताही फोटो (शेत, विखुरलेले कांदे, गोणी) सिस्टम नाकारेल. कांदे नियंत्रित ट्रेमध्ये ठेवणे अनिवार्य आहे.</p>
+      </div>
+      <button class="btn btn-primary btn-lg btn-block mt-16" onclick="goTo('screen-tray-camera')"><span>📷</span> <span data-i18n="btn_open_camera">कॅमेरा उघडा</span></button>
+    </div>
+    <nav class="bottom-nav"><button class="bnav-btn" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button><button class="bnav-btn active" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button><button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button><button class="bnav-btn" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button><button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button></nav>
+  </div>
+
+  <!-- ==================== TRAY CAMERA (with rejection demo) ==================== -->
+  <div class="screen" id="screen-tray-camera">
+    <div class="app-header header-dark">
+      <button class="hdr-back" onclick="goBack()">←</button>
+      <h2 class="hdr-title" data-i18n="camera_title">ट्रे कॅमेरा</h2>
+      <button class="hdr-icon" onclick="showRejectionDemo()">⚙️</button>
+    </div>
+    <div class="camera-view">
+      <div class="camera-preview" id="camera-preview-area">
+        <div class="camera-sim-bg" id="camera-sim-img">
+          <img src="assets/onion_quality_samples.jpg" alt="Onion tray" onerror="this.parentElement.innerHTML='<div class=camera-placeholder>📷<br>Camera Preview</div>'">
+        </div>
+        <div class="tray-overlay" id="tray-overlay">
+          <div class="tray-corners"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div>
+          <div class="tray-overlay-label" data-i18n="tray_boundary">ट्रे सीमा</div>
+        </div>
+        <div class="ref-scale">REF</div>
+      </div>
+      <!-- Image validation checks -->
+      <div class="camera-checks" id="camera-checks">
+        <div class="cam-check ok"><span class="cc-icon">✓</span> <span data-i18n="chk_tray">ट्रे ओळखली</span></div>
+        <div class="cam-check ok"><span class="cc-icon">✓</span> <span data-i18n="chk_onions">कांदे दिसत आहेत (50)</span></div>
+        <div class="cam-check ok"><span class="cc-icon">✓</span> <span data-i18n="chk_light">प्रकाश: चांगला</span></div>
+        <div class="cam-check ok"><span class="cc-icon">✓</span> <span data-i18n="chk_blur">प्रतिमा: स्पष्ट</span></div>
+        <div class="cam-check ok"><span class="cc-icon">✓</span> <span data-i18n="chk_angle">कोन: योग्य</span></div>
+        <div class="cam-check ok"><span class="cc-icon">✓</span> <span data-i18n="chk_inside">सर्व कांदे ट्रेमध्ये</span></div>
+      </div>
+      <!-- Rejection message (hidden by default) -->
+      <div class="camera-rejection" id="camera-rejection" style="display:none;">
+        <div class="rejection-icon">❌</div>
+        <h4 data-i18n="reject_title">ही प्रतिमा स्वीकारता येत नाही</h4>
+        <p id="rejection-reason" data-i18n="reject_reason">ट्रे ओळखली नाही. कृपया कांदे नियंत्रित ट्रेमध्ये ठेवा आणि पुन्हा फोटो घ्या.</p>
+        <button class="btn btn-primary mt-16" onclick="resetCamera()">🔄 <span data-i18n="reject_retry">पुन्हा प्रयत्न करा</span></button>
+      </div>
+      <button class="capture-btn" id="capture-btn" onclick="simulateCapture()">
+        <span class="capture-ring"></span>
+        <span class="capture-label" data-i18n="btn_capture">📷 CAPTURE</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== IMAGE REJECTED EXAMPLES ==================== -->
+  <div class="screen" id="screen-rejection-demo">
+    <div class="app-header">
+      <button class="hdr-back" onclick="goBack()">←</button>
+      <h2 class="hdr-title" data-i18n="rejection_demo_title">प्रतिमा नाकारणी — उदाहरणे</h2>
+      <div></div>
+    </div>
+    <div class="page-body">
+      <p class="section-info" data-i18n="reject_demo_info">सिस्टम फक्त नियंत्रित ट्रेतील कांद्याचे फोटो स्वीकारते. खालील प्रकारचे फोटो नाकारले जातात:</p>
+      <div class="rejection-examples">
+        <div class="reject-example">
+          <div class="re-visual">🌾❌</div>
+          <div class="re-info"><h4 data-i18n="re1_title">शेतातील फोटो</h4><p data-i18n="re1_desc">ट्रे ओळखली नाही. कांदे ट्रेमध्ये ठेवा.</p></div>
+        </div>
+        <div class="reject-example">
+          <div class="re-visual">📦❌</div>
+          <div class="re-info"><h4 data-i18n="re2_title">गोणीतील/पोत्यातील कांदे</h4><p data-i18n="re2_desc">कांदे वेगळे दिसत नाहीत. ट्रेमध्ये ठेवा.</p></div>
+        </div>
+        <div class="reject-example">
+          <div class="re-visual">🌫️❌</div>
+          <div class="re-info"><h4 data-i18n="re3_title">अस्पष्ट / धूसर फोटो</h4><p data-i18n="re3_desc">प्रतिमा स्पष्ट नाही. कॅमेरा स्थिर ठेवा.</p></div>
+        </div>
+        <div class="reject-example">
+          <div class="re-visual">🌙❌</div>
+          <div class="re-info"><h4 data-i18n="re4_title">कमी प्रकाश</h4><p data-i18n="re4_desc">प्रकाश अपुरा आहे. प्रकाश वाढवा.</p></div>
+        </div>
+        <div class="reject-example">
+          <div class="re-visual">📐❌</div>
+          <div class="re-info"><h4 data-i18n="re5_title">चुकीचा कोन</h4><p data-i18n="re5_desc">कॅमेरा ट्रेच्या वरून सरळ धरा.</p></div>
+        </div>
+      </div>
+      <div class="card card-green mt-16 text-center">
+        <h4>✅ <span data-i18n="re_correct">योग्य प्रतिमा</span></h4>
+        <p data-i18n="re_correct_desc">नियंत्रित ट्रे + कांदे दृश्यमान + चांगला प्रकाश + स्थिर कॅमेरा</p>
+        <div class="tray-onions-big" style="font-size:20px; gap:2px; margin-top:8px;">
+          <span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span>
+          <span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span>
+          <span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span><span>🧅</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== AI PIPELINE ==================== -->
+  <div class="screen" id="screen-ai-pipeline">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-farmer-home')">←</button><h2 class="hdr-title" data-i18n="pipeline_title">AI विश्लेषण</h2><div></div></div>
+    <div class="page-body text-center">
+      <div class="pipeline-header"><div class="pipeline-anim">🧅</div><h3 data-i18n="pipeline_heading">AI विश्लेषण सुरू आहे...</h3><p class="pipeline-sub" data-i18n="pipeline_sub">प्रत्येक कांद्याची तपासणी होत आहे</p></div>
+      <div class="pipeline-steps" id="pipeline-steps">
+        <div class="ps-step done" data-step="1"><span class="ps-icon">✓</span><span data-i18n="pipe_1">Image Preprocessing</span></div>
+        <div class="ps-step done" data-step="2"><span class="ps-icon">✓</span><span data-i18n="pipe_2">OpenCV Enhancement</span></div>
+        <div class="ps-step done" data-step="3"><span class="ps-icon">✓</span><span data-i18n="pipe_3">Onion Detection (YOLO)</span></div>
+        <div class="ps-step done" data-step="4"><span class="ps-icon">✓</span><span data-i18n="pipe_4">Segmentation</span></div>
+        <div class="ps-step active" data-step="5"><span class="ps-icon spinner">⟳</span><span data-i18n="pipe_5">Individual Analysis</span></div>
+        <div class="ps-step" data-step="6"><span class="ps-icon">○</span><span data-i18n="pipe_6">Defect Classification</span></div>
+        <div class="ps-step" data-step="7"><span class="ps-icon">○</span><span data-i18n="pipe_7">Size Estimation</span></div>
+        <div class="ps-step" data-step="8"><span class="ps-icon">○</span><span data-i18n="pipe_8">Quality Scoring</span></div>
+        <div class="ps-step" data-step="9"><span class="ps-icon">○</span><span data-i18n="pipe_9">Lot Analysis</span></div>
+        <div class="ps-step" data-step="10"><span class="ps-icon">○</span><span data-i18n="pipe_10">Grading Engine</span></div>
+        <div class="ps-step" data-step="11"><span class="ps-icon">○</span><span data-i18n="pipe_11">Confidence Check</span></div>
+      </div>
+      <div class="pipeline-progress"><div class="pp-bar"><div class="pp-fill" id="pp-fill" style="width:45%"></div></div><p class="pp-text"><span id="pp-pct">45</span>% — <span data-i18n="pipe_detecting">50 कांदे ओळखले · विश्लेषण सुरू...</span></p></div>
+    </div>
+  </div>
+
+  <!-- ==================== INDIVIDUAL ONION ANALYSIS ==================== -->
+  <div class="screen" id="screen-individual-onions">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-quality-result')">←</button><h2 class="hdr-title" data-i18n="indiv_title">प्रत्येक कांदा विश्लेषण</h2><button class="hdr-icon tts-btn" onclick="speak('indiv_title')">🔊</button></div>
+    <div class="page-body"><p class="section-info" data-i18n="indiv_info">AI ने प्रत्येक कांद्याचे स्वतंत्र विश्लेषण केले आहे.</p><div class="onion-grid" id="onion-grid"></div></div>
+    <nav class="bottom-nav"><button class="bnav-btn" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button><button class="bnav-btn active" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button><button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button><button class="bnav-btn" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button><button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button></nav>
+  </div>
+
+  <!-- ==================== QUALITY RESULT (with lifecycle prompt AFTER) ==================== -->
+  <div class="screen" id="screen-quality-result">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-farmer-home')">←</button><h2 class="hdr-title" data-i18n="result_title">गुणवत्ता निकाल</h2><button class="hdr-icon tts-btn" onclick="speak('result_title')">🔊</button></div>
+    <div class="page-body">
+      <div class="grade-hero"><div class="grade-circle grade-a-bg"><span class="grade-letter">A</span></div><div class="grade-info"><p class="grade-label" data-i18n="overall_quality">एकूण गुणवत्ता</p><h2 class="grade-value" data-i18n="quality_good">चांगली (GOOD)</h2><p class="grade-conf">AI <span data-i18n="confidence">विश्वासार्हता</span>: <strong>94%</strong></p></div></div>
+      <div class="lot-meta-row"><span>LOT: ON-2026-00421</span><span>02 Oct 2026</span><span data-i18n="lbl_nashik">नाशिक</span></div>
+      <div class="quality-stats-grid">
+        <div class="qs-card qs-healthy"><span class="qs-val">82%</span><span class="qs-label" data-i18n="stat_healthy">चांगले</span></div>
+        <div class="qs-card qs-damaged"><span class="qs-val">6%</span><span class="qs-label" data-i18n="stat_damaged">खराब</span></div>
+        <div class="qs-card qs-rotten"><span class="qs-val">4%</span><span class="qs-label" data-i18n="stat_rotten">सडलेले</span></div>
+        <div class="qs-card qs-sprouted"><span class="qs-val">3%</span><span class="qs-label" data-i18n="stat_sprouted">मोडलेले</span></div>
+        <div class="qs-card qs-undersized"><span class="qs-val">5%</span><span class="qs-label" data-i18n="stat_undersized">लहान</span></div>
+      </div>
+      <!-- Size -->
+      <div class="card card-outlined mt-16"><h4 class="card-heading">📏 <span data-i18n="size_analysis">आकार विश्लेषण</span></h4><div class="size-summary"><div class="size-avg"><span class="size-avg-val">68 mm</span><span class="size-avg-label" data-i18n="avg_size">सरासरी आकार</span></div><div class="size-uniformity"><span class="size-uni-val">87%</span><span class="size-uni-label" data-i18n="uniformity">एकसमानता</span></div></div><div class="size-bars"><div class="size-bar-row"><span class="sb-label" data-i18n="size_large">मोठे</span><div class="sb-track"><div class="sb-fill sb-large" style="width:42%"></div></div><span class="sb-pct">42%</span></div><div class="size-bar-row"><span class="sb-label" data-i18n="size_medium">मध्यम</span><div class="sb-track"><div class="sb-fill sb-medium" style="width:46%"></div></div><span class="sb-pct">46%</span></div><div class="size-bar-row"><span class="sb-label" data-i18n="size_small">लहान</span><div class="sb-track"><div class="sb-fill sb-small" style="width:12%"></div></div><span class="sb-pct">12%</span></div></div></div>
+      <!-- Grading -->
+      <div class="card card-outlined mt-16"><h4 class="card-heading">⚙️ <span data-i18n="grading_engine">ग्रेडिंग नियम विश्लेषण</span></h4><p class="card-sub" data-i18n="grading_configured">खरेदी प्राधिकरणाद्वारे कॉन्फिगर केलेले गुणवत्ता नियम.</p><table class="grading-table"><thead><tr><th data-i18n="gt_param">मापदंड</th><th data-i18n="gt_observed">निरीक्षण</th><th data-i18n="gt_status">स्थिती</th></tr></thead><tbody><tr><td data-i18n="gt_size">आकार</td><td>68 mm</td><td class="gt-pass">✓</td></tr><tr><td data-i18n="gt_damage">खराबी</td><td>6%</td><td class="gt-pass">✓</td></tr><tr><td data-i18n="gt_rotten">सडलेले</td><td>4%</td><td class="gt-pass">✓</td></tr><tr><td data-i18n="gt_sprouted">मोडलेले</td><td>3%</td><td class="gt-pass">✓</td></tr><tr><td data-i18n="gt_uniformity">एकसमानता</td><td>87%</td><td class="gt-pass">✓</td></tr></tbody></table><div class="grading-result"><span data-i18n="final_grade">अंतिम ग्रेड:</span> <strong class="grade-a-text">GRADE A</strong></div></div>
+      <!-- Confidence -->
+      <div class="card card-outlined mt-16"><h4 class="card-heading">🤖 <span data-i18n="confidence_check">विश्वासार्हता तपासणी</span></h4><div class="confidence-meter"><div class="conf-bar"><div class="conf-fill" style="width:94%"></div></div><span class="conf-val">94%</span></div><p class="conf-status conf-auto" data-i18n="conf_auto">✓ स्वयंचलित स्वीकृत — उच्च विश्वासार्हता</p></div>
+      <!-- Actions -->
+      <div class="action-row mt-16"><button class="btn btn-primary" onclick="goTo('screen-individual-onions')">🔍 <span data-i18n="btn_view_onions">प्रत्येक कांदा पहा</span></button><button class="btn btn-secondary" onclick="goTo('screen-report')">📄 <span data-i18n="btn_full_report">पूर्ण अहवाल</span></button></div>
+      <div class="action-row"><button class="btn btn-outline" onclick="downloadPDF()">📥 <span data-i18n="btn_pdf">PDF डाउनलोड</span></button><button class="btn btn-outline" onclick="showQR()">🔗 <span data-i18n="btn_share">शेअर / QR</span></button></div>
+      <!-- Simple explanation -->
+      <div class="card card-soft mt-16"><h4 class="card-heading">💡 <span data-i18n="what_means">याचा अर्थ काय?</span></h4><p class="explain-text" data-i18n="explain_grade_a">तुमच्या नमुन्यातील बहुतेक कांदे चांगल्या गुणवत्तेचे आढळले. खराब किंवा सडलेल्या कांद्यांचे प्रमाण कमी असल्यामुळे आणि आकाराची एकसमानता चांगली असल्यामुळे हा निकाल मिळाला.</p></div>
+
+      <!-- ====== LIFECYCLE PROMPT — shown AFTER quality result ====== -->
+      <div class="card card-lifecycle-prompt mt-16">
+        <div class="lcp-header">
+          <span class="lcp-icon">🌱</span>
+          <h4 data-i18n="lcp_title">गुणवत्ता सुधारायची आहे?</h4>
+        </div>
+        <p data-i18n="lcp_desc">तुमच्या गुणवत्ता निकालावर आधारित वैयक्तिक पीक मार्गदर्शन मिळवा. पुढील हंगामात गुणवत्ता सुधारण्यासाठी AI तुमचे जीवनचक्र तयार करेल.</p>
+        <div class="lcp-actions">
+          <button class="btn btn-primary" onclick="goTo('screen-next-season')">✅ <span data-i18n="lcp_yes">होय, मार्गदर्शन हवे</span></button>
+          <button class="btn btn-outline" onclick="goTo('screen-farmer-feedback')">📝 <span data-i18n="lcp_feedback">आधी अभिप्राय द्या</span></button>
+        </div>
+      </div>
+    </div>
+    <nav class="bottom-nav"><button class="bnav-btn" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button><button class="bnav-btn active" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button><button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button><button class="bnav-btn" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button><button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button></nav>
+  </div>
+
+  <!-- ==================== FULL REPORT ==================== -->
+  <div class="screen" id="screen-report">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-quality-result')">←</button><h2 class="hdr-title" data-i18n="report_title">गुणवत्ता अहवाल</h2><div></div></div>
+    <div class="page-body">
+      <div class="report-doc">
+        <div class="report-header-block"><div class="report-logo">🧅 ONIONGRADE AI</div><h3 data-i18n="report_heading">कांदा गुणवत्ता मूल्यांकन अहवाल</h3><p class="report-sub">ONION QUALITY ASSESSMENT REPORT</p></div>
+        <table class="report-table"><tr><td data-i18n="rpt_lot">लॉट आयडी</td><td>ON-2026-00421</td></tr><tr><td data-i18n="rpt_center">खरेदी केंद्र</td><td data-i18n="rpt_center_val">नाशिक APMC</td></tr><tr><td data-i18n="rpt_date">तारीख</td><td>02 Oct 2026</td></tr><tr><td data-i18n="rpt_farmer">शेतकरी संदर्भ</td><td>F-2026-1842</td></tr><tr><td data-i18n="rpt_district_lbl">जिल्हा</td><td data-i18n="lbl_nashik">नाशिक</td></tr><tr><td data-i18n="rpt_variety">कांदा प्रकार</td><td data-i18n="rpt_variety_val">लाल कांदा (खरीप)</td></tr><tr><td data-i18n="rpt_count">विश्लेषित कांदे</td><td>50</td></tr></table>
+        <div class="report-section"><h4 data-i18n="rpt_quality_summary">AI गुणवत्ता सारांश</h4><div class="report-grade-badge grade-a-bg">GRADE A</div><div class="report-stats"><div class="rs-row"><span data-i18n="stat_healthy">चांगले</span><span>82% (41)</span></div><div class="rs-row"><span data-i18n="stat_damaged">खराब</span><span>6% (3)</span></div><div class="rs-row"><span data-i18n="stat_rotten">सडलेले</span><span>4% (2)</span></div><div class="rs-row"><span data-i18n="stat_sprouted">मोडलेले</span><span>3% (2)</span></div><div class="rs-row"><span data-i18n="stat_undersized">लहान</span><span>5% (2)</span></div></div></div>
+        <div class="report-section"><h4 data-i18n="rpt_size">आकार वितरण</h4><div class="report-stats"><div class="rs-row"><span data-i18n="avg_size">सरासरी आकार</span><span>68 mm</span></div><div class="rs-row"><span data-i18n="size_large">मोठे</span><span>42%</span></div><div class="rs-row"><span data-i18n="size_medium">मध्यम</span><span>46%</span></div><div class="rs-row"><span data-i18n="size_small">लहान</span><span>12%</span></div><div class="rs-row"><span data-i18n="uniformity">एकसमानता</span><span>87%</span></div></div></div>
+        <div class="report-section"><h4 data-i18n="rpt_confidence">विश्वासार्हता व तपासणी</h4><div class="report-stats"><div class="rs-row"><span>AI Confidence</span><span>94%</span></div><div class="rs-row"><span data-i18n="rpt_verify_status">तपासणी स्थिती</span><span data-i18n="rpt_auto_accepted">स्वयंचलित स्वीकृत</span></div></div></div>
+        <div class="report-section"><h4 data-i18n="rpt_observations">निरीक्षणे</h4><p data-i18n="rpt_obs_text">बहुतेक कांदे चांगल्या गुणवत्तेचे आहेत. काही कांद्यांवर किरकोळ पृष्ठभागीय खराबी दिसली. सडणे आणि मोडणे कमी प्रमाणात आहे.</p></div>
+        <!-- THIS REPORT GOES TO GOVERNMENT -->
+        <div class="report-footer"><p data-i18n="rpt_generated">अहवाल तयार: 02 Oct 2026, 14:35 IST</p><p class="report-note" data-i18n="rpt_gov_note">📤 हा अहवाल प्रादेशिक शासन विश्लेषणात समाविष्ट होतो.</p><p class="report-demo-tag">⚡ DEMO DATA</p></div>
+      </div>
+      <div class="action-row mt-16"><button class="btn btn-primary" onclick="downloadPDF()">📥 PDF</button><button class="btn btn-secondary" onclick="showQR()">🔗 <span data-i18n="btn_share">शेअर / QR</span></button></div>
+    </div>
+    <nav class="bottom-nav"><button class="bnav-btn" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button><button class="bnav-btn active" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button><button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button><button class="bnav-btn" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button><button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button></nav>
+  </div>
+
+  <!-- ==================== PROCUREMENT MANDI & QUALITY MAP ==================== -->
+  <div class="screen" id="screen-proc-map">
+    <div class="app-header">
+      <button class="hdr-back" onclick="goTo('screen-proc-dashboard')">←</button>
+      <div class="hdr-brand">
+        <span class="hdr-logo">🗺️</span>
+        <div>
+          <h2 class="hdr-title" style="font-size:14px;" data-i18n="proc_map_title">खरेदी केंद्र व गुणवत्ता नकाशा</h2>
+          <span class="hdr-badge">PROCUREMENT MAP</span>
+        </div>
+      </div>
+      <div class="hdr-right"><button class="hdr-icon" onclick="goTo('screen-proc-dashboard')">📊</button></div>
+    </div>
+    <div class="page-body">
+      <p class="section-info" data-i18n="proc_map_sub">प्रमुख कांदा मंड्यांची आवक, गुणवत्ता प्रतवारी आणि रिजेक्शन प्रमाण</p>
+      <div class="proc-map-filter-bar">
+        <div class="form-group mb-8">
+          <label class="form-label" style="font-size:12px;font-weight:600;">🏢 Select APMC Mandi Center</label>
+          <select class="form-select" id="proc-mandi-select" onchange="filterProcMap(this.value)">
+            <option value="all" data-i18n="mandi_opt_all">📍 All Procurement Centers (6 Major Mandis)</option>
+            <option value="nashik" selected data-i18n="mandi_opt_nashik">📍 Nashik APMC (Grade A: 82% · Arrivals 1,450 Q)</option>
+            <option value="lasalgaon" data-i18n="mandi_opt_lasal">📍 Lasalgaon APMC (Grade A: 79% · Arrivals 2,100 Q)</option>
+            <option value="pimpalgaon" data-i18n="mandi_opt_pimp">📍 Pimpalgaon APMC (Grade A: 71% · Arrivals 980 Q)</option>
+            <option value="manmad" data-i18n="mandi_opt_manm">📍 Manmad APMC (Grade A: 68% · Arrivals 720 Q)</option>
+            <option value="solapur" data-i18n="mandi_opt_sola">📍 Solapur APMC (Grade A: 52% · ⚠️ High Rejection)</option>
+            <option value="dhule" data-i18n="mandi_opt_dhul">📍 Dhule APMC (Grade A: 76% · Arrivals 510 Q)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="map-container proc-mandi-map">
+        <div class="map-visual">
+          <img src="assets/maharashtra_map.jpg" alt="Maharashtra Onion Belt" class="map-img" onerror="this.style.display='none'">
+          <div class="map-overlay-pins">
+            <div class="map-pin pin-green pin-active" id="proc-pin-nashik" style="top:28%;left:40%" onclick="selectProcMandi('nashik')">
+              🟢<small>नाशिक 82%</small>
+            </div>
+            <div class="map-pin pin-green" id="proc-pin-lasalgaon" style="top:33%;left:47%" onclick="selectProcMandi('lasalgaon')">
+              🟢<small>लासलगाव 79%</small>
+            </div>
+            <div class="map-pin pin-yellow" id="proc-pin-pimpalgaon" style="top:23%;left:44%" onclick="selectProcMandi('pimpalgaon')">
+              🟡<small>पिंपळगाव 71%</small>
+            </div>
+            <div class="map-pin pin-yellow" id="proc-pin-manmad" style="top:29%;left:54%" onclick="selectProcMandi('manmad')">
+              🟡<small>मनमाड 68%</small>
+            </div>
+            <div class="map-pin pin-red" id="proc-pin-solapur" style="top:62%;left:52%" onclick="selectProcMandi('solapur')">
+              🔴<small>सोलापूर 52% ⚠️</small>
+            </div>
+            <div class="map-pin pin-green" id="proc-pin-dhule" style="top:16%;left:46%" onclick="selectProcMandi('dhule')">
+              🟢<small>धुळे 76%</small>
+            </div>
+          </div>
+        </div>
+        <div class="map-legend">
+          <span class="ml-item"><span data-i18n="leg_mandi_good">🟢 Grade A ≥75% (High Acceptance)</span></span>
+          <span class="ml-item"><span data-i18n="leg_mandi_med">🟡 Grade B/C 65-74% (Moderate)</span></span>
+          <span class="ml-item"><span data-i18n="leg_mandi_warn">🔴 &lt;65% (Manual Inspection Needed)</span></span>
+        </div>
+      </div>
+
+      <!-- ACTIVE SELECTED MANDI DETAIL CARD -->
+      <div class="card card-outlined mt-12" id="proc-mandi-detail-card">
+        <div class="pmd-header" style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);padding-bottom:10px;">
+          <div>
+            <h4 class="card-heading" id="pmd-name" style="margin-bottom:2px;">📍 नाशिक APMC</h4>
+            <span class="card-sub" id="pmd-sub" style="font-size:12px;color:var(--text-muted);">कांदा खरेदी व प्रतवारी केंद्र · 02 Oct 2026</span>
+          </div>
+          <span class="badge badge-success" id="pmd-grade-badge" style="background:var(--green-100);color:var(--green-800);padding:4px 10px;border-radius:6px;font-weight:700;">Grade A: 82%</span>
+        </div>
+        <div class="dash-stats-grid mt-12 mb-12">
+          <div class="dash-stat"><span class="ds-num good" id="pmd-today-lots">486</span><span class="ds-label">तपासलेले लॉट</span></div>
+          <div class="dash-stat"><span class="ds-num" id="pmd-arrivals">1,450 Q</span><span class="ds-label">आजची आवक</span></div>
+          <div class="dash-stat"><span class="ds-num good" id="pmd-pass-rate">94%</span><span class="ds-label">स्वीकृती दर</span></div>
+          <div class="dash-stat"><span class="ds-num" id="pmd-avg-size">68 mm</span><span class="ds-label">सरासरी आकार</span></div>
+          <div class="dash-stat ds-warn"><span class="ds-num" id="pmd-review-pending">3</span><span class="ds-label">मानवी तपासणी</span></div>
+          <div class="dash-stat"><span class="ds-num" id="pmd-avg-price">₹1,100</span><span class="ds-label">सरासरी भाव/Q</span></div>
+        </div>
+        <div class="action-row">
+          <button class="btn btn-primary" onclick="goTo('screen-proc-tray-scan')">📷 Start Tray Scan at this Center</button>
+          <button class="btn btn-secondary" onclick="goTo('screen-proc-create-lot')">📝 <span data-i18n="btn_new_lot">New Lot</span></button>
+        </div>
+      </div>
+
+      <!-- MANDI COMPARISON TABLE -->
+      <h4 class="section-label mt-16">📊 APMC Mandi Centers Comparison</h4>
+      <div class="card card-outlined">
+        <div class="scheme-allotment-table">
+          <table class="grading-table">
+            <thead><tr><th data-i18n="th_mandi">Center</th><th data-i18n="th_arrival">Arrivals</th><th data-i18n="th_grade_a">Grade A</th><th data-i18n="th_pending_rev">Review Pending</th><th data-i18n="th_status">Status</th></tr></thead>
+            <tbody>
+              <tr onclick="selectProcMandi('nashik')" style="cursor:pointer;"><td><strong>नाशिक APMC</strong></td><td>1,450 Q</td><td class="gt-pass">82%</td><td>3</td><td><span class="allot-status allot-done">स्वीकृत</span></td></tr>
+              <tr onclick="selectProcMandi('lasalgaon')" style="cursor:pointer;"><td><strong>लासलगाव</strong></td><td>2,100 Q</td><td class="gt-pass">79%</td><td>2</td><td><span class="allot-status allot-done">स्वीकृत</span></td></tr>
+              <tr onclick="selectProcMandi('pimpalgaon')" style="cursor:pointer;"><td><strong>पिंपळगाव</strong></td><td>980 Q</td><td>71%</td><td>4</td><td><span class="allot-status allot-progress">चालू</span></td></tr>
+              <tr onclick="selectProcMandi('manmad')" style="cursor:pointer;"><td><strong>मनमाड</strong></td><td>720 Q</td><td>68%</td><td>1</td><td><span class="allot-status allot-progress">चालू</span></td></tr>
+              <tr onclick="selectProcMandi('solapur')" style="cursor:pointer;"><td><strong>सोलापूर</strong></td><td>640 Q</td><td class="low-conf-text">52%</td><td>8</td><td><span class="allot-status allot-pending">⚠️ अलर्ट</span></td></tr>
+              <tr onclick="selectProcMandi('dhule')" style="cursor:pointer;"><td><strong>धुळे</strong></td><td>510 Q</td><td class="gt-pass">76%</td><td>0</td><td><span class="allot-status allot-done">स्वीकृत</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="disclaimer-box mt-16"><span>ℹ️</span><span>खरेदी अधिकारी केवळ आपल्या अधिकृत केंद्राचे लॉट स्कॅन व पडताळणी करू शकतात.</span></div>
+    </div>
+    <nav class="bottom-nav proc-nav">
+      <button class="bnav-btn" onclick="goTo('screen-proc-dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Dashboard</span></button>
+      <button class="bnav-btn active" onclick="goTo('screen-proc-map')"><span class="bnav-icon">🗺️</span><span class="bnav-label">नकाशा</span></button>
+      <button class="bnav-btn" onclick="goTo('screen-proc-create-lot')"><span class="bnav-icon">📝</span><span class="bnav-label">लॉट</span></button>
+      <button class="bnav-btn" onclick="goTo('screen-proc-review')"><span class="bnav-icon">⚠️</span><span class="bnav-label">तपासणी</span></button>
+      <button class="bnav-btn" onclick="goTo('screen-proc-history')"><span class="bnav-icon">📋</span><span class="bnav-label">इतिहास</span></button>
+    </nav>
+  </div>
+
+  <!-- ==================== GOVERNMENT STATE QUALITY & SCHEME MAP ==================== -->
+  <div class="screen" id="screen-gov-map">
+    <div class="app-header">
+      <button class="hdr-back" onclick="goTo('screen-gov-dashboard')">←</button>
+      <div class="hdr-brand">
+        <span class="hdr-logo">🗺️</span>
+        <div>
+          <h2 class="hdr-title" style="font-size:14px;" data-i18n="gov_map_title">राज्य प्रादेशिक गुणवत्ता नकाशा</h2>
+          <span class="hdr-badge gov-badge">GOVERNMENT MAP</span>
+        </div>
+      </div>
+      <div class="hdr-right"><button class="hdr-icon" onclick="goTo('screen-gov-dashboard')">🏛️</button></div>
+    </div>
+    <div class="page-body">
+      <p class="section-info" data-i18n="gov_map_sub">जिल्हानिहाय गुणवत्ता आणि कमी भावातील शेतकरी योजना वाटप देखरेख</p>
+      <div class="gov-filters">
+        <select class="form-select form-select-sm" id="gov-map-district-select" onchange="filterGovMap(this.value)">
+          <option value="all" data-i18n="gov_opt_all">All Districts (Maharashtra)</option>
+          <option value="nashik" selected data-i18n="gov_opt_nashik">Nashik (High Quality 82%)</option>
+          <option value="ahmednagar" data-i18n="gov_opt_ahmed">Ahmednagar (Good 69%)</option>
+          <option value="pune" data-i18n="gov_opt_pune">Pune (Moderate 63%)</option>
+          <option value="solapur" data-i18n="gov_opt_sola">Solapur (⚠️ Quality Alert 52% · Subsidy Dispatched)</option>
+          <option value="dhule" data-i18n="gov_opt_dhule">Dhule (Good 76% · Subsidy Dispatched)</option>
+        </select>
+        <select class="form-select form-select-sm"><option>Oct 2026</option></select>
+      </div>
+
+      <div class="map-container gov-full-map">
+        <div class="map-visual">
+          <img src="assets/maharashtra_map.jpg" alt="Maharashtra" class="map-img" onerror="this.style.display='none'">
+          <div class="map-overlay-pins">
+            <div class="map-pin pin-green" style="top:28%;left:42%" onclick="selectGovDistrict('nashik')">🟢<small>नाशिक (82%)</small></div>
+            <div class="map-pin pin-green" style="top:38%;left:48%" onclick="selectGovDistrict('ahmednagar')">🟢<small>अहमदनगर (69%)</small></div>
+            <div class="map-pin pin-yellow" style="top:52%;left:38%" onclick="selectGovDistrict('pune')">🟡<small>पुणे (63%)</small></div>
+            <div class="map-pin pin-red" style="top:60%;left:52%" onclick="selectGovDistrict('solapur')">🔴<small>सोलापूर (52%) ⚠️</small></div>
+            <div class="map-pin pin-green" style="top:18%;left:45%" onclick="selectGovDistrict('dhule')">🟢<small>धुळे (76%)</small></div>
+          </div>
+        </div>
+        <div class="map-legend">
+          <span class="ml-item"><span data-i18n="gov_leg_high">🟢 High Quality (≥70%)</span></span>
+          <span class="ml-item"><span data-i18n="gov_leg_med">🟡 Moderate (60-69%)</span></span>
+          <span class="ml-item"><span data-i18n="gov_leg_low">🔴 Quality Concern (&lt;60%)</span></span>
+        </div>
+      </div>
+
+      <!-- DISTRICT DETAIL IN GOV MAP -->
+      <div class="card card-outlined mt-12" id="gov-district-detail-card">
+        <h4 class="card-heading" id="gdd-name">📍 नाशिक जिल्हा</h4>
+        <div class="district-stats mt-8">
+          <div class="ds-row"><span data-i18n="ds_avg_quality">सरासरी गुणवत्ता</span><span class="ds-val good" id="gdd-quality">82% (उत्कृष्ट)</span></div>
+          <div class="ds-row"><span>Grade A प्रमाण</span><span class="ds-val" id="gdd-grade-a">74%</span></div>
+          <div class="ds-row"><span>एकूण नोंदणीकृत लॉट</span><span class="ds-val" id="gdd-lots">1,486 लॉट</span></div>
+          <div class="ds-row"><span>कमी बाजारभाव शेतकरी</span><span class="ds-val" id="gdd-low-rate">87 शेतकरी</span></div>
+          <div class="ds-row"><span>योजना वाटप स्थिती</span><span class="ds-val allot-done" id="gdd-scheme-status">✅ 100% साठवणूक अनुदान वाटप</span></div>
+        </div>
+        <div class="action-row mt-12">
+          <button class="btn btn-primary" onclick="goTo('screen-gov-analytics')"><span data-i18n="btn_view_dist_analytics">📈 View District Analytics</span></button>
+          <button class="btn btn-secondary" onclick="goTo('screen-gov-reports')"><span data-i18n="btn_policy_report">📑 Policy Reports</span></button>
+        </div>
+      </div>
+
+      <!-- REGION-WISE SCHEME ALLOTMENT STATUS -->
+      <h4 class="section-label mt-16" data-i18n="gov_scheme_relief_hdr">🏛️ Scheme Relief for Low Price Farmers</h4>
+      <div class="card card-outlined">
+        <p class="card-sub mb-8">ज्या जिल्ह्यांत कांद्याची गुणवत्ता कमी आढळली व भाव घसरले, तेथे त्वरित शासन अनुदान वाटप:</p>
+        <div class="scheme-allotment-table">
+          <table class="grading-table">
+            <thead><tr><th>जिल्हा</th><th>कमी भाव शेतकरी</th><th>योजना</th><th>वाटप स्थिती</th></tr></thead>
+            <tbody>
+              <tr><td>सोलापूर</td><td>342</td><td>कांदा अनुदान योजना</td><td><span class="allot-status allot-done">✅ वाटप पूर्ण</span></td></tr>
+              <tr><td>सोलापूर</td><td>189</td><td>कांदा चाळ अनुदान</td><td><span class="allot-status allot-pending">⏳ 189 प्रलंबित</span></td></tr>
+              <tr><td>धुळे</td><td>215</td><td>कांदा अनुदान योजना</td><td><span class="allot-status allot-done">✅ वाटप पूर्ण</span></td></tr>
+              <tr><td>पुणे</td><td>128</td><td>कांदा अनुदान योजना</td><td><span class="allot-status allot-progress">🔄 प्रक्रियेत</span></td></tr>
+              <tr><td>नाशिक</td><td>87</td><td>कांदा चाळ / साठवणूक</td><td><span class="allot-status allot-done">✅ वाटप पूर्ण</span></td></tr>
+              <tr><td>अहमदनगर</td><td>156</td><td>कांदा अनुदान योजना</td><td><span class="allot-status allot-pending">⏳ 156 प्रलंबित</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="disclaimer-box mt-16"><span>ℹ️</span><span data-i18n="gov_disclaimer">एकत्रित आणि अज्ञात डेमो डेटा. वैयक्तिक शेतकरी माहिती यात समाविष्ट नाही.</span></div>
+    </div>
+    <nav class="bottom-nav gov-nav">
+      <button class="bnav-btn" onclick="goTo('screen-gov-dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Dashboard</span></button>
+      <button class="bnav-btn active" onclick="goTo('screen-gov-map')"><span class="bnav-icon">🗺️</span><span class="bnav-label">नकाशा</span></button>
+      <button class="bnav-btn" onclick="goTo('screen-gov-analytics')"><span class="bnav-icon">📈</span><span class="bnav-label">Analytics</span></button>
+      <button class="bnav-btn" onclick="goTo('screen-gov-reports')"><span class="bnav-icon">📋</span><span class="bnav-label">अहवाल</span></button>
+    </nav>
+  </div>
+
+  <!-- ==================== MARKET ==================== -->
+  <div class="screen" id="screen-market">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-farmer-home')">←</button><h2 class="hdr-title" data-i18n="market_title">बाजार माहिती</h2><button class="hdr-icon tts-btn" onclick="speak('market_title')">🔊</button></div>
+    <div class="page-body">
+      <div class="market-cards">
+        <div class="market-card"><h4>📍 <span data-i18n="mkt_nashik_apmc">नाशिक APMC</span></h4><p class="mkt-date">02 Oct 2026</p><div class="mkt-prices"><div class="mp-row"><span data-i18n="mkt_min">किमान</span><span class="mp-val">₹800/क्विंटल</span></div><div class="mp-row"><span data-i18n="mkt_max">कमाल</span><span class="mp-val">₹1,400/क्विंटल</span></div><div class="mp-row"><span data-i18n="mkt_avg">सरासरी</span><span class="mp-val mp-avg">₹1,100/क्विंटल</span></div></div></div>
+        <div class="market-card"><h4>📍 <span data-i18n="mkt_lasalgaon">लासलगाव</span></h4><p class="mkt-date">02 Oct 2026</p><div class="mkt-prices"><div class="mp-row"><span data-i18n="mkt_min">किमान</span><span class="mp-val">₹900/क्विंटल</span></div><div class="mp-row"><span data-i18n="mkt_max">कमाल</span><span class="mp-val">₹1,500/क्विंटल</span></div><div class="mp-row"><span data-i18n="mkt_avg">सरासरी</span><span class="mp-val mp-avg">₹1,200/क्विंटल</span></div></div></div>
+      </div>
+      <div class="card card-warning mt-16"><h4 class="card-heading">💡 <span data-i18n="mkt_low_price">सध्या भाव कमी आहे? या पर्यायांचा विचार करा:</span></h4><div class="low-price-options"><button class="lpo-btn" onclick="goTo('screen-gov-schemes')">🏛️ <span data-i18n="lpo_gov">शासन खरेदी/आधार तपासा</span></button><button class="lpo-btn" onclick="goTo('screen-gov-schemes')">🏪 <span data-i18n="lpo_storage">साठवणूक पर्याय तपासा</span></button><button class="lpo-btn" onclick="goTo('screen-chatbot')">🤖 <span data-i18n="lpo_chat">कांदा मित्र ला विचारा</span></button></div></div>
+      <div class="disclaimer-box mt-16"><span>⚠️</span><span data-i18n="mkt_disclaimer">बाजारभाव बदलतात. भविष्यातील भावांची हमी नाही.</span></div>
+    </div>
+    <nav class="bottom-nav"><button class="bnav-btn" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button><button class="bnav-btn" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button><button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button><button class="bnav-btn" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button><button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button></nav>
+  </div>
+
+  <!-- ==================== GOV SCHEMES ==================== -->
+  <div class="screen" id="screen-gov-schemes">
+    <div class="app-header"><button class="hdr-back" onclick="goBack()">←</button><h2 class="hdr-title" data-i18n="gov_title">शासन योजना</h2><button class="hdr-icon tts-btn" onclick="speak('gov_title')">🔊</button></div>
+    <div class="page-body">
+      <div class="scheme-categories"><button class="scheme-cat active" onclick="filterSchemes(this,'all')">📋 <span data-i18n="sch_all">सर्व</span></button><button class="scheme-cat" onclick="filterSchemes(this,'procurement')">🏛️ <span data-i18n="sch_procurement">खरेदी</span></button><button class="scheme-cat" onclick="filterSchemes(this,'storage')">🏪 <span data-i18n="sch_storage">साठवणूक</span></button><button class="scheme-cat" onclick="filterSchemes(this,'insurance')">🛡️ <span data-i18n="sch_insurance">विमा</span></button></div>
+      <div class="schemes-list">
+        <div class="scheme-card"><div class="scheme-tag tag-procurement">🏛️ खरेदी</div><h4 data-i18n="sch1_name">कांदा अनुदान / खरेदी आधार योजना</h4><p class="scheme-purpose" data-i18n="sch1_purpose">कांदा भाव कमी असताना शेतकऱ्यांना आर्थिक आधार.</p><div class="scheme-details"><div class="sd-row"><span data-i18n="sch_who">कोण पात्र</span><span data-i18n="sch1_who">कांदा उत्पादक शेतकरी</span></div><div class="sd-row"><span data-i18n="sch_benefit">संभाव्य लाभ</span><span data-i18n="sch1_benefit">अनुदान / किमान आधार</span></div></div></div>
+        <div class="scheme-card"><div class="scheme-tag tag-storage">🏪 साठवणूक</div><h4 data-i18n="sch2_name">कांदा चाळ / कोल्ड स्टोरेज अनुदान</h4><p class="scheme-purpose" data-i18n="sch2_purpose">कांदा साठवणुकीसाठी चाळ उभारणी अनुदान.</p></div>
+        <div class="scheme-card"><div class="scheme-tag tag-insurance">🛡️ विमा</div><h4 data-i18n="sch3_name">प्रधानमंत्री पीक विमा योजना (PMFBY)</h4><p class="scheme-purpose" data-i18n="sch3_purpose">पीक नुकसानीसाठी विमा संरक्षण.</p></div>
+        <div class="scheme-card"><div class="scheme-tag tag-input">🌱 निविष्ठा</div><h4 data-i18n="sch4_name">ठिबक / तुषार सिंचन अनुदान</h4><p class="scheme-purpose" data-i18n="sch4_purpose">सूक्ष्म सिंचन अनुदान.</p></div>
+      </div>
+      <div class="disclaimer-box mt-16"><span>⚠️</span><span data-i18n="sch_disclaimer">योजनांचे नियम बदलू शकतात. अधिकृत स्रोत तपासा.</span></div>
+    </div>
+    <nav class="bottom-nav"><button class="bnav-btn" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button><button class="bnav-btn" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button><button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button><button class="bnav-btn" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button><button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button></nav>
+  </div>
+
+  <!-- ==================== CHATBOT ==================== -->
+  <div class="screen" id="screen-chatbot">
+    <div class="app-header">
+      <button class="hdr-back" onclick="goBack()">←</button>
+      <div class="hdr-brand">
+        <span class="hdr-logo">🤖</span>
+        <div>
+          <h2 class="hdr-title" style="font-size:14px;" data-i18n="chat_hdr_title">Onion Mitra AI</h2>
+          <span class="hdr-badge" data-i18n="chat_badge">24x7 Q&A SUPPORT</span>
+        </div>
+      </div>
+      <div class="hdr-right">
+        <button class="hdr-icon" onclick="clearChat()" title="Clear Chat">🔄</button>
+      </div>
+    </div>
+    <div class="chat-body" id="chat-body">
+      <div class="chat-welcome" id="chat-welcome">
+        <div class="chat-avatar">🤖</div>
+        <h3 data-i18n="chat_bot_name">Onion Mitra AI</h3>
+        <p data-i18n="chat_welcome">Hello! Ask me any question about onion quality, grading, storage chawls, mandi rates, pests, or government subsidies.</p>
+        
+        <!-- Category Filter Chips -->
+        <div class="chat-topic-pills" id="chat-topic-pills">
+          <button class="chat-topic-pill active" onclick="filterChatTopic('all', this)">🌐 <span data-i18n="chat_tab_all">All Questions</span></button>
+          <button class="chat-topic-pill" onclick="filterChatTopic('quality', this)">🧅 <span data-i18n="chat_tab_quality">Quality & Grading</span></button>
+          <button class="chat-topic-pill" onclick="filterChatTopic('storage', this)">🏪 <span data-i18n="chat_tab_storage">Storage & Chawl</span></button>
+          <button class="chat-topic-pill" onclick="filterChatTopic('pests', this)">🐛 <span data-i18n="chat_tab_pests">Pests & Diseases</span></button>
+          <button class="chat-topic-pill" onclick="filterChatTopic('market', this)">💰 <span data-i18n="chat_tab_market">Mandi Prices</span></button>
+          <button class="chat-topic-pill" onclick="filterChatTopic('schemes', this)">🏛️ <span data-i18n="chat_tab_schemes">Subsidies</span></button>
+          <button class="chat-topic-pill" onclick="filterChatTopic('cultivation', this)">🌱 <span data-i18n="chat_tab_cultivation">Next Season</span></button>
+        </div>
+
+        <!-- Question Suggestion Chips (Dynamically rendered) -->
+        <div class="chat-suggestions" id="chat-suggestions"></div>
+      </div>
+      <div id="chat-messages"></div>
+    </div>
+    <div class="chat-input-bar">
+      <button class="chat-voice-btn" onclick="startVoiceInput()" title="Voice Input">🎙️</button>
+      <input type="text" class="chat-input" id="chat-input" data-placeholder-i18n="chat_placeholder" placeholder="Ask any question about onions..." onkeydown="if(event.key==='Enter') sendChat()">
+      <button class="chat-send-btn" onclick="sendChat()" title="Send">➤</button>
+    </div>
+  </div>
+
+  <!-- ==================== FEEDBACK ==================== -->
+  <div class="screen" id="screen-farmer-feedback">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-farmer-home')">←</button><h2 class="hdr-title" data-i18n="feedback_title">हंगाम अभिप्राय</h2><button class="hdr-icon tts-btn" onclick="speak('feedback_title')">🔊</button></div>
+    <div class="page-body">
+      <div class="card card-accent mb-16 text-center"><h3 data-i18n="feedback_heading">तुमच्या या हंगामाचा अनुभव कसा होता?</h3></div>
+      <div class="feedback-emoji-row"><button class="feedback-emoji active" onclick="selectEmoji(this)">😊<br><small data-i18n="fb_good">चांगला</small></button><button class="feedback-emoji" onclick="selectEmoji(this)">😐<br><small data-i18n="fb_ok">ठीक</small></button><button class="feedback-emoji" onclick="selectEmoji(this)">☹️<br><small data-i18n="fb_bad">अडचणी</small></button></div>
+      <h4 class="section-label mt-16" data-i18n="fb_issues">कोणत्या समस्या आल्या?</h4>
+      <div class="chip-group"><button class="chip" onclick="toggleChip(this)">💧 पाणी</button><button class="chip" onclick="toggleChip(this)">🐛 किड</button><button class="chip" onclick="toggleChip(this)">🦠 रोग</button><button class="chip" onclick="toggleChip(this)">📏 आकार</button><button class="chip" onclick="toggleChip(this)">🧅 गुणवत्ता</button><button class="chip" onclick="toggleChip(this)">🏪 साठवणूक</button><button class="chip" onclick="toggleChip(this)">💰 बाजारभाव</button><button class="chip" onclick="toggleChip(this)">🌧️ हवामान</button></div>
+      <div class="form-group mt-16"><label class="form-label" data-i18n="fb_details">तपशील (ऐच्छिक)</label><textarea class="form-textarea" rows="3" placeholder="तुमचा अनुभव लिहा..."></textarea></div>
+      <button class="btn btn-primary btn-lg btn-block mt-16" onclick="submitFeedback()">✅ <span data-i18n="fb_submit">अभिप्राय पाठवा</span></button>
+    </div>
+    <nav class="bottom-nav"><button class="bnav-btn" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button><button class="bnav-btn" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button><button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button><button class="bnav-btn" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button><button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button></nav>
+  </div>
+
+  <!-- ==================== NEXT SEASON ==================== -->
+  <div class="screen" id="screen-next-season">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-farmer-home')">←</button><h2 class="hdr-title" data-i18n="next_season_title">पुढील हंगाम मार्गदर्शन</h2><div></div></div>
+    <div class="page-body">
+      <div class="card card-accent mb-16"><h4 data-i18n="ns_based_on">तुमच्या मागील हंगामाच्या गुणवत्ता निकाल आणि अभिप्रायावर आधारित:</h4></div>
+      <div class="card card-outlined mb-16"><h4 class="card-heading" data-i18n="ns_prev_season">📊 मागील हंगाम</h4><div class="ns-prev-stats"><div class="ns-stat"><span>Grade A</span><span>74%</span></div><div class="ns-stat"><span data-i18n="avg_size">सरासरी आकार</span><span data-i18n="size_medium">मध्यम</span></div><div class="ns-stat"><span data-i18n="ns_size_var">आकार विविधता</span><span data-i18n="ns_high">उच्च</span></div></div><p class="ns-farmer-quote">💬 "<span data-i18n="ns_fb_quote">माझ्या कांद्याचा आकार अपेक्षेपेक्षा कमी राहिला.</span>"</p></div>
+      <div class="card card-green mb-16"><h4 class="card-heading" data-i18n="ns_target">🎯 पुढील हंगाम लक्ष्य</h4><p data-i18n="ns_target_desc">आकाराची एकसमानता सुधारणे आणि गुणवत्ता वाढवणे.</p></div>
+      <h4 class="section-label" data-i18n="ns_production_target">उत्पादन लक्ष्य निवडा</h4>
+      <div class="target-cards"><button class="target-card active" onclick="selectTarget(this)"><span class="tc-icon">🧅</span><span class="tc-name" data-i18n="ns_preferred">मोठा / Preferred</span></button><button class="target-card" onclick="selectTarget(this)"><span class="tc-icon">📦</span><span class="tc-name" data-i18n="ns_standard">मध्यम / Standard</span></button><button class="target-card" onclick="selectTarget(this)"><span class="tc-icon">🏪</span><span class="tc-name" data-i18n="ns_storage_target">साठवणूक</span></button></div>
+      <h4 class="section-label mt-16" data-i18n="ns_monitoring">निरीक्षण प्राधान्ये</h4>
+      <div class="monitoring-checks"><div class="mc-item"><span class="mc-check">✓</span><span data-i18n="ns_m1">पाणी व्यवस्थापन</span></div><div class="mc-item"><span class="mc-check">✓</span><span data-i18n="ns_m2">कंद विकास</span></div><div class="mc-item"><span class="mc-check">✓</span><span data-i18n="ns_m3">रोग/किड</span></div><div class="mc-item"><span class="mc-check">✓</span><span data-i18n="ns_m4">आकार चेकपॉइंट</span></div><div class="mc-item"><span class="mc-check">✓</span><span data-i18n="ns_m5">पक्वता</span></div><div class="mc-item"><span class="mc-check">✓</span><span data-i18n="ns_m6">काढणीनंतर ट्रे स्कॅन</span></div></div>
+      <button class="btn btn-primary btn-lg btn-block mt-16" onclick="goTo('screen-farmer-lifecycle')">🌱 <span data-i18n="ns_start_lifecycle">जीवनचक्र सुरू करा</span></button>
+    </div>
+    <nav class="bottom-nav"><button class="bnav-btn" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button><button class="bnav-btn" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button><button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button><button class="bnav-btn active" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button><button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button></nav>
+  </div>
+
+  <!-- ==================== LIFECYCLE (detailed like reference screenshot) ==================== -->
+  <div class="screen" id="screen-farmer-lifecycle">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-farmer-home')">←</button><h2 class="hdr-title" data-i18n="lifecycle_title">पीक जीवनचक्र</h2><button class="hdr-icon tts-btn" onclick="speak('lifecycle_title')">🔊</button></div>
+    <div class="page-body">
+      <!-- Lifecycle prompt (before activation) -->
+      <div class="card card-soft mb-16 text-center" id="lifecycle-prompt">
+        <span class="big-icon">🌱</span>
+        <h3 data-i18n="lc_prompt">तुम्हाला पुढील हंगामासाठी वैयक्तिक मार्गदर्शन हवे आहे का?</h3>
+        <p class="card-sub" data-i18n="lc_prompt_sub">गुणवत्ता निकालावर आधारित वैयक्तिक जीवनचक्र तयार होईल.</p>
+        <div class="action-row mt-16"><button class="btn btn-primary" onclick="activateLifecycle()">✅ <span data-i18n="lc_yes">होय, तयार करा</span></button><button class="btn btn-outline" onclick="goTo('screen-farmer-home')">🔙 <span data-i18n="lc_not_now">आत्ता नको</span></button></div>
+      </div>
+      <!-- DETAILED LIFECYCLE TIMELINE (like reference screenshot) -->
+      <div class="lifecycle-timeline-detailed" id="lifecycle-timeline" style="display:none;">
+        <!-- Stage 1 -->
+        <div class="ltd-stage ltd-done">
+          <div class="ltd-dot done">🌱</div>
+          <div class="ltd-card">
+            <h4>🌱 <span data-i18n="lc_s1">बियाणे / वाण निवड</span></h4>
+            <p class="ltd-days">दिवस 1-7 — <span data-i18n="lc_done">पूर्ण</span></p>
+            <div class="ltd-tags"><span class="ltd-tag done-tag">✅ <span data-i18n="lc_done">पूर्ण</span></span><span class="ltd-tag">योग्य वाण</span></div>
+          </div>
+        </div>
+        <!-- Stage 2 -->
+        <div class="ltd-stage ltd-done">
+          <div class="ltd-dot done">🌿</div>
+          <div class="ltd-card">
+            <h4>🌿 <span data-i18n="lc_s2">रोपवाटिका / पेरणी</span></h4>
+            <p class="ltd-days">दिवस 8-20 — <span data-i18n="lc_done">पूर्ण</span></p>
+            <div class="ltd-tags"><span class="ltd-tag done-tag">✅ <span data-i18n="lc_done">पूर्ण</span></span></div>
+          </div>
+        </div>
+        <!-- Stage 3 -->
+        <div class="ltd-stage ltd-done">
+          <div class="ltd-dot done">🌾</div>
+          <div class="ltd-card">
+            <h4>🌾 <span data-i18n="lc_s3">पुनर्रोपण</span></h4>
+            <p class="ltd-days">दिवस 20-25 — <span data-i18n="lc_done">पूर्ण</span></p>
+            <div class="ltd-tags"><span class="ltd-tag done-tag">✅ <span data-i18n="lc_done">पूर्ण</span></span><span class="ltd-tag">योग्य अंतर</span></div>
+          </div>
+        </div>
+        <!-- Stage 4 -->
+        <div class="ltd-stage ltd-done">
+          <div class="ltd-dot done">🌿</div>
+          <div class="ltd-card">
+            <h4>🌿 <span data-i18n="lc_s4">वनस्पती वाढ</span></h4>
+            <p class="ltd-days">दिवस 30-55 — <span data-i18n="lc_done">पूर्ण</span></p>
+            <div class="ltd-tags"><span class="ltd-tag done-tag">✅ <span data-i18n="lc_done">पूर्ण</span></span><span class="ltd-tag">पाने संतुलित</span></div>
+          </div>
+        </div>
+        <!-- Stage 5 -->
+        <div class="ltd-stage ltd-done">
+          <div class="ltd-dot done">🧅</div>
+          <div class="ltd-card">
+            <h4>🧅 <span data-i18n="lc_s5">कांदा सुरुवात</span></h4>
+            <p class="ltd-days">दिवस 55-65 — <span data-i18n="lc_done">पूर्ण</span></p>
+            <div class="ltd-tags"><span class="ltd-tag done-tag">✅ <span data-i18n="lc_done">पूर्ण</span></span><span class="ltd-tag">कंद दिसू लागला</span></div>
+          </div>
+        </div>
+        <!-- Stage 6: ACTIVE -->
+        <div class="ltd-stage ltd-active">
+          <div class="ltd-dot active-dot">🧅</div>
+          <div class="ltd-card ltd-card-active">
+            <h4>🧅 <span data-i18n="lc_s6">कांदा वाढ (Bulb Development)</span></h4>
+            <p class="ltd-days">दिवस 65-90 — <span data-i18n="lc_current_days">सध्या सुरू (दिवस 68)</span></p>
+            <p class="ltd-guidance" data-i18n="lc_s6_guidance">🌟 शेतकऱ्यांसाठी: कांदा आता मोठा होतो आहे. पाणी नियमित द्या. पिवळी पाने दिसल्यास फोटो काढा.</p>
+            <div class="ltd-tags">
+              <span class="ltd-tag active-tag">🌱 <span data-i18n="lc_current">सध्या सुरू</span></span>
+              <span class="ltd-tag">💧 नियमित सिंचन</span>
+              <span class="ltd-tag">✏️ आज बघा</span>
+              <span class="ltd-tag">🐛 कीड तपासा</span>
+            </div>
+            <button class="btn btn-primary btn-sm mt-8">📷 <span data-i18n="lc_take_photo">फोटो अपलोड करा</span></button>
+          </div>
+        </div>
+        <!-- Stage 7 -->
+        <div class="ltd-stage ltd-upcoming">
+          <div class="ltd-dot upcoming-dot">🧅</div>
+          <div class="ltd-card ltd-card-upcoming">
+            <h4>🧅 <span data-i18n="lc_s7">कांदा परिपक्वता</span></h4>
+            <p class="ltd-days">दिवस 90-110</p>
+          </div>
+        </div>
+        <!-- Stage 8 -->
+        <div class="ltd-stage ltd-upcoming">
+          <div class="ltd-dot upcoming-dot">🌾</div>
+          <div class="ltd-card ltd-card-upcoming">
+            <h4>🌾 <span data-i18n="lc_s8">काढणी</span></h4>
+            <p class="ltd-days">दिवस 110-120</p>
+          </div>
+        </div>
+        <!-- Stage 9 -->
+        <div class="ltd-stage ltd-upcoming">
+          <div class="ltd-dot upcoming-dot">☀️</div>
+          <div class="ltd-card ltd-card-upcoming">
+            <h4>☀️ <span data-i18n="lc_s9">क्युरिंग</span></h4>
+            <p class="ltd-days">दिवस 120-130</p>
+          </div>
+        </div>
+        <!-- Stage 10: Returns to tray scan -->
+        <div class="ltd-stage ltd-upcoming">
+          <div class="ltd-dot upcoming-dot">📷</div>
+          <div class="ltd-card ltd-card-upcoming">
+            <h4>📷 <span data-i18n="lc_s10">ग्रेडिंग — ट्रे स्कॅन</span></h4>
+            <p class="ltd-days" data-i18n="lc_s10_desc">काढणीनंतर नियंत्रित ट्रेमध्ये कांदे ठेवून अंतिम गुणवत्ता तपासणी</p>
+          </div>
+        </div>
+        <!-- Stage 11 -->
+        <div class="ltd-stage ltd-upcoming">
+          <div class="ltd-dot upcoming-dot">🏪</div>
+          <div class="ltd-card ltd-card-upcoming">
+            <h4>🏪 <span data-i18n="lc_s11">साठवणूक / बाजार</span></h4>
+          </div>
+        </div>
+      </div>
+      <!-- Today/Week/Month tasks -->
+      <div id="lifecycle-tasks" style="display:none;">
+        <h4 class="section-label mt-16" data-i18n="lc_today">📅 आजची कामे</h4>
+        <div class="task-cards"><div class="task-card"><span class="task-check">☐</span><span data-i18n="lc_t1">माती ओलावा तपासा</span></div><div class="task-card"><span class="task-check">☐</span><span data-i18n="lc_t2">पानांची तपासणी करा</span></div><div class="task-card"><span class="task-check">☐</span><span data-i18n="lc_t3">किड लक्षणे शोधा</span></div></div>
+        <h4 class="section-label mt-16" data-i18n="lc_week">📅 या आठवड्यात</h4>
+        <div class="task-cards"><div class="task-card"><span class="task-check">☐</span><span data-i18n="lc_w1">हवामान तपासा</span></div><div class="task-card"><span class="task-check">☐</span><span data-i18n="lc_w2">पीक वाढ तपासा</span></div><div class="task-card"><span class="task-check">☐</span><span data-i18n="lc_w3">पीक फोटो अपलोड करा</span></div></div>
+      </div>
+    </div>
+    <nav class="bottom-nav"><button class="bnav-btn" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button><button class="bnav-btn" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button><button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button><button class="bnav-btn active" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button><button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button></nav>
+  </div>
+
+  <!-- ==================== REPORTS / NOTIFICATIONS / PROFILE ==================== -->
+  <div class="screen" id="screen-reports">
+    <div class="app-header"><button class="hdr-back" onclick="goBack()">←</button><h2 class="hdr-title" data-i18n="reports_center">अहवाल केंद्र</h2><div></div></div>
+    <div class="page-body">
+      <div class="report-list">
+        <div class="report-item" onclick="goTo('screen-report')"><span class="ri-icon">🧅</span><div class="ri-info"><h4 data-i18n="rpt_type1">कांदा गुणवत्ता अहवाल</h4><p>LOT ON-2026-00421</p></div><span class="ri-arrow">→</span></div>
+        <div class="report-item" onclick="goTo('screen-quality-result')"><span class="ri-icon">🧅</span><div class="ri-info"><h4>लॉट गुणवत्ता निकाल अहवाल</h4><p>LOT ON-2026-00421 · Grade A</p></div><span class="ri-arrow">→</span></div>
+        <div class="report-item" onclick="goTo('screen-farmer-lifecycle')"><span class="ri-icon">🌱</span><div class="ri-info"><h4 data-i18n="rpt_type4">पीक जीवनचक्र अहवाल</h4></div><span class="ri-arrow">→</span></div>
+        <div class="report-item" onclick="goTo('screen-next-season')"><span class="ri-icon">🎯</span><div class="ri-info"><h4 data-i18n="rpt_type6">पुढील हंगाम मार्गदर्शन</h4></div><span class="ri-arrow">→</span></div>
+      </div>
+    </div>
+    <nav class="bottom-nav"><button class="bnav-btn" onclick="goTo('screen-farmer-home')"><span class="bnav-icon">🏠</span><span class="bnav-label" data-i18n="nav_home">होम</span></button><button class="bnav-btn" onclick="goTo('screen-tray-guide')"><span class="bnav-icon">🧅</span><span class="bnav-label" data-i18n="nav_quality">गुणवत्ता</span></button><button class="bnav-btn" onclick="goTo('screen-market')"><span class="bnav-icon">💰</span><span class="bnav-label" data-i18n="svc_market">बाजार</span></button><button class="bnav-btn" onclick="goTo('screen-farmer-lifecycle')"><span class="bnav-icon">🌱</span><span class="bnav-label" data-i18n="nav_lifecycle">जीवनचक्र</span></button><button class="bnav-btn" onclick="goTo('screen-chatbot')"><span class="bnav-icon">🤖</span><span class="bnav-label">मित्र</span></button></nav>
+  </div>
+  <div class="screen" id="screen-notifications">
+    <div class="app-header"><button class="hdr-back" onclick="goBack()">←</button><h2 class="hdr-title" data-i18n="notif_title">सूचना</h2><div></div></div>
+    <div class="page-body"><div class="notif-list"><div class="notif-item notif-new"><span class="ni-icon">📊</span><div class="ni-body"><p data-i18n="notif1">तुमचा गुणवत्ता अहवाल तयार आहे.</p><small>2 Oct · 14:35</small></div></div><div class="notif-item notif-new"><span class="ni-icon">🧅</span><div class="ni-body"><p data-i18n="notif2">पुढील गुणवत्ता चेकपॉइंट जवळ आहे.</p><small>1 Oct</small></div></div><div class="notif-item"><span class="ni-icon">🌱</span><div class="ni-body"><p data-i18n="notif3">तुमचे पीक कंद निर्मिती टप्प्यात आहे.</p><small>28 Sep</small></div></div></div></div>
+  </div>
+  <div class="screen" id="screen-farmer-profile">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-farmer-home')">←</button><h2 class="hdr-title" data-i18n="profile_title">प्रोफाइल</h2><div></div></div>
+    <div class="page-body"><div class="profile-card"><div class="profile-avatar">👨‍🌾</div><h3 id="profile-name">राजेश पाटील</h3><p id="profile-village">देवळा, नाशिक</p></div><div class="profile-menu"><button class="pm-item" onclick="goTo('screen-reports')">📊 माझे अहवाल</button><button class="pm-item" onclick="goTo('screen-farmer-feedback')">📝 अभिप्राय</button><button class="pm-item" onclick="goTo('screen-next-season')">🎯 पुढील हंगाम</button><button class="pm-item" onclick="goTo('screen-welcome')">🚪 बाहेर पडा</button></div></div>
+  </div>
+
+  <!-- QR Modal -->
+  <div class="modal-overlay" id="modal-qr" onclick="closeModal('modal-qr')"><div class="modal-content" onclick="event.stopPropagation()"><button class="modal-close" onclick="closeModal('modal-qr')">✕</button><h3 data-i18n="qr_title">अहवाल शेअर करा</h3><div class="qr-display"><div class="qr-code"></div><p class="qr-info" data-i18n="qr_info">हा QR कोड स्कॅन करून अहवाल पहा.</p><p class="qr-note" data-i18n="qr_note">हा फक्त अहवाल लिंक आहे.</p></div><button class="btn btn-primary btn-block mt-16" onclick="closeModal('modal-qr')">👍 ठीक</button></div></div>
+
+  <!-- ======================================================================================== -->
+  <!-- ==================== PROCUREMENT OFFICER ==================== -->
+  <!-- ======================================================================================== -->
+  <div class="screen" id="screen-proc-login">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-welcome')">←</button><h2 class="hdr-title">अधिकारी लॉगिन</h2><div></div></div>
+    <div class="page-body text-center"><div class="login-card"><span class="big-icon">📋</span><h3>खरेदी अधिकारी लॉगिन</h3><div class="form-group"><label class="form-label">👤 ID</label><input type="text" class="form-input" value="PROC-NASHIK-01"></div><div class="form-group"><label class="form-label">🔒 Password</label><input type="password" class="form-input" value="••••••••"></div><button class="btn btn-primary btn-lg btn-block" onclick="goTo('screen-proc-dashboard')">🔑 लॉगिन</button></div></div>
+  </div>
+  <div class="screen" id="screen-proc-dashboard">
+    <div class="app-header"><button class="mobile-menu-btn" onclick="toggleSidebar()" title="Menu">☰</button><div class="hdr-brand"><span class="hdr-logo">📋</span><div><h2 class="hdr-title" style="font-size:14px;">ONIONGRADE AI</h2><span class="hdr-badge">PROCUREMENT</span></div></div><div class="hdr-right"><button class="hdr-icon" onclick="goTo('screen-welcome')">🚪</button></div></div>
+    <div class="page-body">
+      <div class="dash-stats-grid"><div class="dash-stat"><span class="ds-num">12</span><span class="ds-label">आजचे लॉट</span></div><div class="dash-stat ds-warn"><span class="ds-num">3</span><span class="ds-label">प्रलंबित</span></div><div class="dash-stat"><span class="ds-num good">82%</span><span class="ds-label">गुणवत्ता</span></div><div class="dash-stat"><span class="ds-num">74%</span><span class="ds-label">Grade A</span></div><div class="dash-stat ds-warn"><span class="ds-num">2</span><span class="ds-label">Low Conf</span></div><div class="dash-stat"><span class="ds-num">486</span><span class="ds-label">एकूण</span></div></div>
+      <div class="proc-actions-grid"><button class="proc-action-btn" onclick="goTo('screen-proc-create-lot')">📝 <span data-i18n="btn_proc_create_lot">Create Lot</span></button><button class="proc-action-btn" onclick="goTo('screen-proc-tray-scan')">📷 ट्रे स्कॅन</button><button class="proc-action-btn" onclick="goTo('screen-proc-map')">🗺️ <span data-i18n="btn_proc_map">Mandi Map</span></button><button class="proc-action-btn" onclick="goTo('screen-proc-review')">⚠️ तपासणी</button><button class="proc-action-btn" onclick="goTo('screen-proc-history')">📊 इतिहास</button></div>
+      
+      <!-- MANDI QUALITY MAP PREVIEW CARD -->
+      <div class="card card-outlined mb-16" onclick="goTo('screen-proc-map')" style="cursor:pointer;background:linear-gradient(135deg,rgba(16,185,129,.05),rgba(59,130,246,.05));">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <h4 class="card-heading" style="margin:0;" data-i18n="proc_map_preview_title">🗺️ Procurement Mandi Quality Map</h4>
+          <span class="badge" style="background:var(--primary);color:#fff;font-size:10px;padding:2px 8px;border-radius:4px;">LIVE MANDIS</span>
+        </div>
+        <p style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;" data-i18n="proc_map_preview_sub">View arrivals, quality grades, and live inspection queues for Nashik, Lasalgaon, Pimpalgaon, Manmad & Solapur APMC.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:4px;">📍 नाशिक: <strong>82% A</strong> (1,450 Q)</span>
+          <span style="font-size:11px;background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:4px;">📍 लासलगाव: <strong>79% A</strong> (2,100 Q)</span>
+          <span style="font-size:11px;background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;padding:3px 8px;border-radius:4px;">📍 सोलापूर: <strong>52% A ⚠️</strong></span>
+        </div>
+        <button class="btn btn-outline btn-sm mt-12" style="width:100%;"><span data-i18n="btn_open_mandi_map">🗺️ Open Full Procurement Map →</span></button>
+      </div>
+
+      <h4 class="section-label">अलीकडील लॉट</h4>
+      <div class="proc-lot-list">
+        <div class="proc-lot-item" onclick="goTo('screen-proc-lot-result')"><div class="pli-top"><span class="pli-id">ON-2026-00421</span><span class="rl-grade grade-a">A</span></div><div class="pli-meta"><span>राजेश पाटील</span><span>02 Oct</span><span>50</span><span>94%</span></div></div>
+        <div class="proc-lot-item"><div class="pli-top"><span class="pli-id">ON-2026-00420</span><span class="rl-grade grade-b">B</span></div><div class="pli-meta"><span>सुनिता माळी</span><span>01 Oct</span><span>48</span><span>87%</span></div></div>
+        <div class="proc-lot-item"><div class="pli-top"><span class="pli-id">ON-2026-00419</span><span class="rl-grade grade-review">⚠️</span></div><div class="pli-meta"><span>विकास शिंदे</span><span>01 Oct</span><span>52</span><span class="low-conf-text">61%</span></div></div>
+      </div>
+    </div>
+    <nav class="bottom-nav proc-nav"><button class="bnav-btn active" onclick="goTo('screen-proc-dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Dashboard</span></button><button class="bnav-btn" onclick="goTo('screen-proc-map')"><span class="bnav-icon">🗺️</span><span class="bnav-label">नकाशा</span></button><button class="bnav-btn" onclick="goTo('screen-proc-create-lot')"><span class="bnav-icon">📝</span><span class="bnav-label">लॉट</span></button><button class="bnav-btn" onclick="goTo('screen-proc-review')"><span class="bnav-icon">⚠️</span><span class="bnav-label">तपासणी</span></button><button class="bnav-btn" onclick="goTo('screen-proc-history')"><span class="bnav-icon">📋</span><span class="bnav-label">इतिहास</span></button></nav>
+  </div>
+  <div class="screen" id="screen-proc-create-lot">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-proc-dashboard')">←</button><h2 class="hdr-title">नवीन लॉट</h2><div></div></div>
+    <div class="page-body">
+      <div class="form-group"><label class="form-label">📋 Lot ID</label><input type="text" class="form-input" value="ON-2026-00422" readonly></div>
+      <div class="form-group"><label class="form-label" data-i18n="lbl_farmer_ref">👨‍🌾 Farmer Reference</label><input type="text" class="form-input" placeholder="F-2026-XXXX"></div>
+      <div class="form-group"><label class="form-label" data-i18n="lbl_proc_center">🏢 Procurement Center</label><select class="form-select"><option>नाशिक APMC</option><option>लासलगाव APMC</option></select></div>
+      <div class="form-group"><label class="form-label" data-i18n="lbl_onion_type">🧅 Variety Type</label><select class="form-select"><option>लाल कांदा (खरीप)</option><option>पांढरा कांदा</option></select></div>
+      <div class="form-group"><label class="form-label" data-i18n="lbl_sample_onions">🧅 Sample Onions</label><input type="number" class="form-input" value="50"></div>
+      <button class="btn btn-primary btn-lg btn-block mt-16" onclick="goTo('screen-proc-tray-scan')">📷 ट्रे स्कॅन सुरू करा</button>
+    </div>
+    <nav class="bottom-nav proc-nav"><button class="bnav-btn" onclick="goTo('screen-proc-dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Dashboard</span></button><button class="bnav-btn" onclick="goTo('screen-proc-map')"><span class="bnav-icon">🗺️</span><span class="bnav-label">नकाशा</span></button><button class="bnav-btn active" onclick="goTo('screen-proc-create-lot')"><span class="bnav-icon">📝</span><span class="bnav-label">लॉट</span></button><button class="bnav-btn" onclick="goTo('screen-proc-review')"><span class="bnav-icon">⚠️</span><span class="bnav-label">तपासणी</span></button><button class="bnav-btn" onclick="goTo('screen-proc-history')"><span class="bnav-icon">📋</span><span class="bnav-label">इतिहास</span></button></nav>
+  </div>
+  <div class="screen" id="screen-proc-tray-scan">
+    <div class="app-header header-dark"><button class="hdr-back" onclick="goTo('screen-proc-dashboard')">←</button><h2 class="hdr-title">ट्रे कॅमेरा</h2><div></div></div>
+    <div class="camera-view"><div class="camera-preview"><div class="camera-sim-bg"><img src="assets/onion_quality_samples.jpg" alt="Tray" onerror="this.parentElement.innerHTML='<div class=camera-placeholder>📷</div>'"></div><div class="tray-overlay"><div class="tray-corners"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div></div><div class="ref-scale">REF</div></div><div class="camera-checks"><div class="cam-check ok"><span class="cc-icon">✓</span> ट्रे ओळखली</div><div class="cam-check ok"><span class="cc-icon">✓</span> कांदे (50)</div><div class="cam-check ok"><span class="cc-icon">✓</span> प्रकाश ✓</div><div class="cam-check ok"><span class="cc-icon">✓</span> स्पष्ट ✓</div></div><button class="capture-btn" onclick="simulateProcCapture()"><span class="capture-ring"></span><span class="capture-label">📷 CAPTURE</span></button></div>
+  </div>
+  <div class="screen" id="screen-proc-lot-result">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-proc-dashboard')">←</button><h2 class="hdr-title">लॉट निकाल</h2><div></div></div>
+    <div class="page-body">
+      <div class="grade-hero"><div class="grade-circle grade-a-bg"><span class="grade-letter">A</span></div><div class="grade-info"><p class="grade-label">LOT ON-2026-00421</p><h2 class="grade-value">GOOD</h2><p class="grade-conf">AI Confidence: <strong>94%</strong></p></div></div>
+      <div class="quality-stats-grid"><div class="qs-card qs-healthy"><span class="qs-val">82%</span><span class="qs-label">Healthy</span></div><div class="qs-card qs-damaged"><span class="qs-val">6%</span><span class="qs-label">Damaged</span></div><div class="qs-card qs-rotten"><span class="qs-val">4%</span><span class="qs-label">Rotten</span></div><div class="qs-card qs-sprouted"><span class="qs-val">3%</span><span class="qs-label">Sprouted</span></div><div class="qs-card qs-undersized"><span class="qs-val">5%</span><span class="qs-label">Small</span></div></div>
+      <div class="card card-outlined mt-16"><h4 class="card-heading">⚙️ Grading Engine</h4><table class="grading-table"><thead><tr><th>Parameter</th><th>Observed</th><th>Threshold</th><th>Status</th></tr></thead><tbody><tr><td>Size</td><td>68mm</td><td>≥55mm</td><td class="gt-pass">✓</td></tr><tr><td>Damage</td><td>6%</td><td>≤10%</td><td class="gt-pass">✓</td></tr><tr><td>Rotten</td><td>4%</td><td>≤5%</td><td class="gt-pass">✓</td></tr><tr><td>Sprouted</td><td>3%</td><td>≤5%</td><td class="gt-pass">✓</td></tr><tr><td>Uniformity</td><td>87%</td><td>≥75%</td><td class="gt-pass">✓</td></tr></tbody></table><div class="grading-result">Final Grade: <strong class="grade-a-text">GRADE A</strong></div></div>
+      <div class="action-row mt-16"><button class="btn btn-primary" onclick="goTo('screen-individual-onions')">🔍 Onions</button><button class="btn btn-secondary" onclick="goTo('screen-report')">📄 Report</button></div>
+      <div class="action-row"><button class="btn btn-outline" onclick="downloadPDF()">📥 PDF</button><button class="btn btn-outline" onclick="showQR()">🔗 QR</button></div>
+    </div>
+    <nav class="bottom-nav proc-nav"><button class="bnav-btn" onclick="goTo('screen-proc-dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Dashboard</span></button><button class="bnav-btn" onclick="goTo('screen-proc-map')"><span class="bnav-icon">🗺️</span><span class="bnav-label">नकाशा</span></button><button class="bnav-btn" onclick="goTo('screen-proc-create-lot')"><span class="bnav-icon">📝</span><span class="bnav-label">लॉट</span></button><button class="bnav-btn" onclick="goTo('screen-proc-review')"><span class="bnav-icon">⚠️</span><span class="bnav-label">तपासणी</span></button><button class="bnav-btn active" onclick="goTo('screen-proc-history')"><span class="bnav-icon">📋</span><span class="bnav-label">इतिहास</span></button></nav>
+  </div>
+  <div class="screen" id="screen-proc-review">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-proc-dashboard')">←</button><h2 class="hdr-title">मानव तपासणी</h2><div></div></div>
+    <div class="page-body">
+      <div class="card card-warning mb-16"><h4>कमी विश्वासार्हता — अधिकारी तपासणी आवश्यक</h4></div>
+      <div class="review-card"><div class="review-header"><span class="review-lot">ON-2026-00419 · Onion #14</span><span class="review-conf low">61%</span></div><div class="review-body"><div class="review-image"><div class="review-img-placeholder">🧅<br><small>#14</small></div></div><div class="review-details"><p class="review-ai-result"><strong>AI:</strong> Surface Damage</p><p class="review-alt"><strong>Alt:</strong> Healthy (39%)</p><div class="review-actions"><button class="btn btn-sm btn-success" onclick="confirmReview(this)">✓ Confirm</button><button class="btn btn-sm btn-warning" onclick="showCorrectOptions(this)">✏️ Correct</button></div><div class="correction-options" style="display:none;"><div class="chip-group"><button class="chip" onclick="selectChip(this)">Healthy</button><button class="chip" onclick="selectChip(this)">Damaged</button><button class="chip" onclick="selectChip(this)">Rotten</button><button class="chip" onclick="selectChip(this)">Sprouted</button></div><button class="btn btn-sm btn-primary mt-8" onclick="submitCorrection(this)">Submit</button></div></div></div></div>
+      <div class="review-card"><div class="review-header"><span class="review-lot">ON-2026-00419 · Onion #31</span><span class="review-conf low">58%</span></div><div class="review-body"><div class="review-image"><div class="review-img-placeholder">🧅<br><small>#31</small></div></div><div class="review-details"><p class="review-ai-result"><strong>AI:</strong> Rotten</p><p class="review-alt"><strong>Alt:</strong> Surface Damage (42%)</p><div class="review-actions"><button class="btn btn-sm btn-success" onclick="confirmReview(this)">✓ Confirm</button><button class="btn btn-sm btn-warning" onclick="showCorrectOptions(this)">✏️ Correct</button></div><div class="correction-options" style="display:none;"><div class="chip-group"><button class="chip" onclick="selectChip(this)">Healthy</button><button class="chip" onclick="selectChip(this)">Damaged</button><button class="chip" onclick="selectChip(this)">Rotten</button></div><button class="btn btn-sm btn-primary mt-8" onclick="submitCorrection(this)">Submit</button></div></div></div></div>
+    </div>
+    <nav class="bottom-nav proc-nav"><button class="bnav-btn" onclick="goTo('screen-proc-dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Dashboard</span></button><button class="bnav-btn" onclick="goTo('screen-proc-map')"><span class="bnav-icon">🗺️</span><span class="bnav-label">नकाशा</span></button><button class="bnav-btn" onclick="goTo('screen-proc-create-lot')"><span class="bnav-icon">📝</span><span class="bnav-label">लॉट</span></button><button class="bnav-btn active" onclick="goTo('screen-proc-review')"><span class="bnav-icon">⚠️</span><span class="bnav-label">तपासणी</span></button><button class="bnav-btn" onclick="goTo('screen-proc-history')"><span class="bnav-icon">📋</span><span class="bnav-label">इतिहास</span></button></nav>
+  </div>
+  <div class="screen" id="screen-proc-history">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-proc-dashboard')">←</button><h2 class="hdr-title">लॉट इतिहास</h2><div></div></div>
+    <div class="page-body">
+      <div class="proc-lot-list">
+        <div class="proc-lot-item" onclick="goTo('screen-proc-lot-result')"><div class="pli-top"><span class="pli-id">ON-2026-00421</span><span class="rl-grade grade-a">A</span></div><div class="pli-meta"><span>राजेश पाटील</span><span>02 Oct</span><span>94%</span></div></div>
+        <div class="proc-lot-item"><div class="pli-top"><span class="pli-id">ON-2026-00420</span><span class="rl-grade grade-b">B</span></div><div class="pli-meta"><span>सुनिता माळी</span><span>01 Oct</span><span>87%</span></div></div>
+        <div class="proc-lot-item"><div class="pli-top"><span class="pli-id">ON-2026-00419</span><span class="rl-grade grade-review">⚠️</span></div><div class="pli-meta"><span>विकास शिंदे</span><span>01 Oct</span><span class="low-conf-text">61%</span></div></div>
+        <div class="proc-lot-item"><div class="pli-top"><span class="pli-id">ON-2026-00418</span><span class="rl-grade grade-a">A</span></div><div class="pli-meta"><span>गणेश जाधव</span><span>30 Sep</span><span>96%</span></div></div>
+      </div>
+    </div>
+    <nav class="bottom-nav proc-nav"><button class="bnav-btn" onclick="goTo('screen-proc-dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Dashboard</span></button><button class="bnav-btn" onclick="goTo('screen-proc-create-lot')"><span class="bnav-icon">📝</span><span class="bnav-label">लॉट</span></button><button class="bnav-btn" onclick="goTo('screen-proc-review')"><span class="bnav-icon">⚠️</span><span class="bnav-label">तपासणी</span></button><button class="bnav-btn active" onclick="goTo('screen-proc-history')"><span class="bnav-icon">📋</span><span class="bnav-label">इतिहास</span></button></nav>
+  </div>
+
+  <!-- ======================================================================================== -->
+  <!-- ==================== GOVERNMENT OFFICER (with SCHEME ALLOTMENT) ==================== -->
+  <!-- ======================================================================================== -->
+  <div class="screen" id="screen-gov-login">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-welcome')">←</button><h2 class="hdr-title">शासन अधिकारी लॉगिन</h2><div></div></div>
+    <div class="page-body text-center"><div class="login-card"><span class="big-icon">🏛️</span><h3>शासन / कृषी अधिकारी लॉगिन</h3><div class="form-group"><label class="form-label">👤 Officer ID</label><input type="text" class="form-input" value="GOV-MH-AGR-01"></div><div class="form-group"><label class="form-label">🔒 Password</label><input type="password" class="form-input" value="••••••••"></div><button class="btn btn-primary btn-lg btn-block" onclick="goTo('screen-gov-dashboard')">🔑 लॉगिन</button></div></div>
+  </div>
+  <div class="screen" id="screen-gov-dashboard">
+    <div class="app-header"><button class="mobile-menu-btn" onclick="toggleSidebar()" title="Menu">☰</button><div class="hdr-brand"><span class="hdr-logo">🏛️</span><div><h2 class="hdr-title" style="font-size:14px;">ONIONGRADE AI</h2><span class="hdr-badge gov-badge">GOVERNMENT ANALYTICS</span></div></div><div class="hdr-right"><button class="hdr-icon" onclick="goTo('screen-welcome')">🚪</button></div></div>
+    <div class="page-body">
+      <div class="gov-filters"><select class="form-select form-select-sm"><option>महाराष्ट्र</option></select><select class="form-select form-select-sm"><option>सर्व जिल्हे</option><option>नाशिक</option><option>अहमदनगर</option><option>पुणे</option><option>सोलापूर</option></select><select class="form-select form-select-sm"><option>Oct 2026</option><option>Sep 2026</option></select></div>
+      <div class="dash-stats-grid gov-stats"><div class="dash-stat"><span class="ds-num">78%</span><span class="ds-label">प्रादेशिक गुणवत्ता</span></div><div class="dash-stat"><span class="ds-num">71%</span><span class="ds-label">Grade A</span></div><div class="dash-stat"><span class="ds-num">64mm</span><span class="ds-label">सरासरी आकार</span></div><div class="dash-stat"><span class="ds-num">2,847</span><span class="ds-label">एकूण लॉट</span></div><div class="dash-stat ds-warn"><span class="ds-num" style="font-size:12px">Surface Damage</span><span class="ds-label">सामान्य दोष</span></div><div class="dash-stat"><span class="ds-num trend-up">↗</span><span class="ds-label">ट्रेंड</span></div></div>
+
+      <!-- REGIONAL MAP -->
+      <h4 class="section-label">🗺️ प्रादेशिक गुणवत्ता नकाशा</h4>
+      <div class="map-container gov-map"><div class="map-visual"><img src="assets/maharashtra_map.jpg" alt="Maharashtra" class="map-img" onerror="this.style.display='none'"><div class="map-overlay-pins"><div class="map-pin pin-green" style="top:28%;left:42%">🟢<small>नाशिक</small></div><div class="map-pin pin-green" style="top:38%;left:48%">🟢<small>अहमदनगर</small></div><div class="map-pin pin-yellow" style="top:52%;left:38%">🟡<small>पुणे</small></div><div class="map-pin pin-red" style="top:60%;left:52%">🔴<small>सोलापूर</small></div></div></div><div class="map-legend"><span class="ml-item">🟢 उच्च</span><span class="ml-item">🟡 मध्यम</span><span class="ml-item">🔴 चिंता</span></div></div>
+
+      <!-- GRADE DISTRIBUTION -->
+      <h4 class="section-label mt-16">📊 ग्रेड वितरण</h4>
+      <div class="card card-outlined"><div class="chart-bars"><div class="chart-bar-group"><div class="chart-bar grade-a-bar" style="height:71%"></div><span>A<br>71%</span></div><div class="chart-bar-group"><div class="chart-bar grade-b-bar" style="height:19%"></div><span>B<br>19%</span></div><div class="chart-bar-group"><div class="chart-bar grade-c-bar" style="height:7%"></div><span>C<br>7%</span></div><div class="chart-bar-group"><div class="chart-bar grade-d-bar" style="height:3%"></div><span>D<br>3%</span></div></div></div>
+
+      <!-- ====== REGION-WISE SCHEME ALLOTMENT FOR LOW-RATE FARMERS ====== -->
+      <h4 class="section-label mt-16" data-i18n="gov_scheme_allotment_title">🏛️ प्रदेशनिहाय योजना वाटप — कमी भावातील शेतकरी</h4>
+      <div class="card card-outlined">
+        <p class="card-sub mb-8" data-i18n="gov_scheme_allotment_desc">ज्या भागातील शेतकऱ्यांना कमी बाजारभाव मिळाला, त्यांच्यासाठी योजना वाटप स्थिती:</p>
+        <div class="scheme-allotment-table">
+          <table class="grading-table">
+            <thead><tr><th data-i18n="sa_district">जिल्हा</th><th data-i18n="sa_low_rate_farmers">कमी भाव शेतकरी</th><th data-i18n="sa_scheme_allotted">योजना वाटप</th><th data-i18n="sa_status">स्थिती</th></tr></thead>
+            <tbody>
+              <tr><td>सोलापूर</td><td>342</td><td>कांदा अनुदान</td><td><span class="allot-status allot-done">✅ वाटप</span></td></tr>
+              <tr><td>सोलापूर</td><td>189</td><td>चाळ अनुदान</td><td><span class="allot-status allot-pending">⏳ प्रलंबित</span></td></tr>
+              <tr><td>धुळे</td><td>215</td><td>कांदा अनुदान</td><td><span class="allot-status allot-done">✅ वाटप</span></td></tr>
+              <tr><td>पुणे</td><td>128</td><td>कांदा अनुदान</td><td><span class="allot-status allot-progress">🔄 प्रक्रिया</span></td></tr>
+              <tr><td>नाशिक</td><td>87</td><td>साठवणूक अनुदान</td><td><span class="allot-status allot-done">✅ वाटप</span></td></tr>
+              <tr><td>अहमदनगर</td><td>156</td><td>कांदा अनुदान</td><td><span class="allot-status allot-pending">⏳ प्रलंबित</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="allotment-summary mt-8">
+          <div class="as-row"><span data-i18n="sa_total_farmers">एकूण कमी भाव शेतकरी:</span><strong>1,117</strong></div>
+          <div class="as-row"><span data-i18n="sa_allotted">योजना वाटप पूर्ण:</span><strong class="trend-up">644 (57.6%)</strong></div>
+          <div class="as-row"><span data-i18n="sa_pending_count">प्रलंबित:</span><strong class="low-conf-text">345 (30.9%)</strong></div>
+          <div class="as-row"><span data-i18n="sa_processing">प्रक्रियेत:</span><strong>128 (11.5%)</strong></div>
+        </div>
+      </div>
+
+      <!-- REGIONAL REPORTS FLOWING IN -->
+      <h4 class="section-label mt-16" data-i18n="gov_incoming_reports">📤 प्राप्त प्रादेशिक अहवाल</h4>
+      <div class="card card-outlined">
+        <div class="incoming-reports">
+          <div class="ir-item"><span class="ir-icon">📊</span><div class="ir-info"><p><strong>नाशिक</strong> — 486 लॉट, Grade A: 74%</p><small>02 Oct 2026 · Auto-aggregated</small></div></div>
+          <div class="ir-item"><span class="ir-icon">📊</span><div class="ir-info"><p><strong>अहमदनगर</strong> — 312 लॉट, Grade A: 69%</p><small>02 Oct 2026 · Auto-aggregated</small></div></div>
+          <div class="ir-item"><span class="ir-icon">📊</span><div class="ir-info"><p><strong>सोलापूर</strong> — 198 लॉट, Grade A: 52%</p><small>01 Oct 2026 · ⚠️ Quality concern</small></div></div>
+          <div class="ir-item"><span class="ir-icon">📊</span><div class="ir-info"><p><strong>पुणे</strong> — 245 लॉट, Grade A: 63%</p><small>01 Oct 2026</small></div></div>
+        </div>
+      </div>
+
+      <div class="disclaimer-box mt-16"><span>ℹ️</span><span data-i18n="gov_disclaimer">एकत्रित आणि अज्ञात डेमो डेटा. वैयक्तिक शेतकरी माहिती यात समाविष्ट नाही.</span></div>
+    </div>
+    <nav class="bottom-nav gov-nav"><button class="bnav-btn active" onclick="goTo('screen-gov-dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Dashboard</span></button><button class="bnav-btn" onclick="goTo('screen-gov-map')"><span class="bnav-icon">🗺️</span><span class="bnav-label">नकाशा</span></button><button class="bnav-btn" onclick="goTo('screen-gov-analytics')"><span class="bnav-icon">📈</span><span class="bnav-label">Analytics</span></button><button class="bnav-btn" onclick="goTo('screen-gov-reports')"><span class="bnav-icon">📋</span><span class="bnav-label">अहवाल</span></button></nav>
+  </div>
+  <div class="screen" id="screen-gov-analytics">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-gov-dashboard')">←</button><h2 class="hdr-title">Analytics</h2><div></div></div>
+    <div class="page-body">
+      <h4 class="section-label" data-i18n="gov_trend_hdr">Procurement Quality Trends</h4>
+      <div class="card card-outlined"><div class="trend-chart"><div class="trend-row"><span>Jul</span><div class="trend-bar" style="width:60%"></div><span>68%</span></div><div class="trend-row"><span>Aug</span><div class="trend-bar" style="width:65%"></div><span>72%</span></div><div class="trend-row"><span>Sep</span><div class="trend-bar" style="width:70%"></div><span>76%</span></div><div class="trend-row"><span>Oct</span><div class="trend-bar highlight" style="width:78%"></div><span>78%</span></div></div><p class="chart-note" data-i18n="gov_chart_note">↗ Positive quality progression</p></div>
+      <h4 class="section-label mt-16" data-i18n="gov_center_comp_hdr">Mandi Centers Comparison</h4>
+      <div class="card card-outlined"><div class="center-compare"><div class="cc-row"><span>नाशिक APMC</span><span class="cc-val good">82%</span></div><div class="cc-row"><span>लासलगाव APMC</span><span class="cc-val good">79%</span></div><div class="cc-row"><span>पिंपळगाव APMC</span><span class="cc-val moderate">71%</span></div><div class="cc-row"><span>मनमाड APMC</span><span class="cc-val moderate">68%</span></div></div></div>
+      <h4 class="section-label mt-16" data-i18n="gov_farmer_fb_hdr">Farmer Feedback Summary</h4>
+      <div class="card card-outlined"><div class="feedback-trend"><div class="ft-row"><span>😊 चांगला</span><div class="sb-track"><div class="sb-fill sb-large" style="width:55%"></div></div><span>55%</span></div><div class="ft-row"><span>😐 ठीक</span><div class="sb-track"><div class="sb-fill sb-medium" style="width:30%"></div></div><span>30%</span></div><div class="ft-row"><span>☹️ अडचणी</span><div class="sb-track"><div class="sb-fill sb-rotten" style="width:15%"></div></div><span>15%</span></div></div></div>
+    </div>
+    <nav class="bottom-nav gov-nav"><button class="bnav-btn" onclick="goTo('screen-gov-dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Dashboard</span></button><button class="bnav-btn" onclick="goTo('screen-gov-map')"><span class="bnav-icon">🗺️</span><span class="bnav-label">नकाशा</span></button><button class="bnav-btn active" onclick="goTo('screen-gov-analytics')"><span class="bnav-icon">📈</span><span class="bnav-label">Analytics</span></button><button class="bnav-btn" onclick="goTo('screen-gov-reports')"><span class="bnav-icon">📋</span><span class="bnav-label">अहवाल</span></button></nav>
+  </div>
+  <div class="screen" id="screen-gov-reports">
+    <div class="app-header"><button class="hdr-back" onclick="goTo('screen-gov-dashboard')">←</button><h2 class="hdr-title">शासन अहवाल</h2><div></div></div>
+    <div class="page-body"><div class="report-list"><div class="report-item"><span class="ri-icon">🗺️</span><div class="ri-info"><h4 data-i18n="rep_reg_qual">Regional Quality Report</h4><p>Oct 2026 · महाराष्ट्र</p></div><span class="ri-arrow">→</span></div><div class="report-item"><span class="ri-icon">📊</span><div class="ri-info"><h4 data-i18n="rep_grade_dist">Grade Distribution Report</h4></div><span class="ri-arrow">→</span></div><div class="report-item"><span class="ri-icon">🏛️</span><div class="ri-info"><h4 data-i18n="rep_scheme_allot">Scheme Relief Allotment Report</h4><p>कमी भाव शेतकरी — Oct 2026</p></div><span class="ri-arrow">→</span></div><div class="report-item"><span class="ri-icon">📈</span><div class="ri-info"><h4 data-i18n="rep_proc_trends">Procurement Trend Report</h4></div><span class="ri-arrow">→</span></div><div class="report-item"><span class="ri-icon">📝</span><div class="ri-info"><h4 data-i18n="rep_farmer_feedback_sum">Farmer Feedback Summary Report</h4></div><span class="ri-arrow">→</span></div></div></div>
+    <nav class="bottom-nav gov-nav"><button class="bnav-btn" onclick="goTo('screen-gov-dashboard')"><span class="bnav-icon">📊</span><span class="bnav-label">Dashboard</span></button><button class="bnav-btn" onclick="goTo('screen-gov-map')"><span class="bnav-icon">🗺️</span><span class="bnav-label">नकाशा</span></button><button class="bnav-btn" onclick="goTo('screen-gov-analytics')"><span class="bnav-icon">📈</span><span class="bnav-label">Analytics</span></button><button class="bnav-btn active" onclick="goTo('screen-gov-reports')"><span class="bnav-icon">📋</span><span class="bnav-label">अहवाल</span></button></nav>
+  </div>
+
+  </div><!-- /main-content -->
+
+</div><!-- /app-shell -->
+
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
